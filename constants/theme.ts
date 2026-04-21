@@ -1,53 +1,44 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 import { Platform } from 'react-native'
 
-const tintColorLight = '#0a7ea4'
-const tintColorDark = '#fff'
+export const Brand = {
+  celeste: '#72B8E6',
+  dorado: '#C9A96D',
+  gris: '#C5C2BE'
+} as const
 
 export const Colors = {
   light: {
     text: '#11181C',
     background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight
+    tint: Brand.celeste,
+    icon: Brand.gris,
+    tabIconDefault: Brand.gris,
+    tabIconSelected: Brand.celeste
   },
   dark: {
     text: '#ECEDEE',
     background: '#151718',
-    tint: tintColorDark,
+    tint: Brand.celeste,
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark
+    tabIconSelected: Brand.celeste
   }
 }
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace'
+    regular: 'OpenSans_400Regular',
+    light: 'OpenSans_300Light',
+    bold: 'OpenSans_700Bold'
   },
   default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace'
+    regular: 'OpenSans_400Regular',
+    light: 'OpenSans_300Light',
+    bold: 'OpenSans_700Bold'
   },
   web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+    regular: "'Open Sans', sans-serif",
+    light: "'Open Sans', sans-serif",
+    bold: "'Open Sans', sans-serif"
   }
 })
