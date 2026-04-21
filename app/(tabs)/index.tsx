@@ -1,5 +1,5 @@
 import { Image } from 'expo-image'
-import { Platform, StyleSheet } from 'react-native'
+import { Platform, StyleSheet, Text } from 'react-native'
 
 import { HelloWave } from '@/components/hello-wave'
 import ParallaxScrollView from '@/components/parallax-scroll-view'
@@ -14,7 +14,9 @@ export default function HomeScreen() {
       headerImage={<Image source={require('@/assets/images/partial-react-logo.png')} style={styles.reactLogo} />}
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText className="text-red-500" type="title">
+          Welcome! probando
+        </ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
@@ -30,6 +32,7 @@ export default function HomeScreen() {
           </ThemedText>{' '}
           to open developer tools.
         </ThemedText>
+        <Text className="text-blue-500">probando cositas</Text>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <Link href="/modal">
