@@ -1,36 +1,69 @@
-import { Tabs } from 'expo-router'
-import React from 'react'
-
+import { Redirect, Tabs } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
+import { ActivityIndicator, View } from 'react-native'
+import { useAuth } from '@/lib/auth-context'
 import { HapticTab } from '@/components/haptic-tab'
-import { IconSymbol } from '@/components/ui/icon-symbol'
-import { Colors } from '@/constants/theme'
-import { useColorScheme } from '@/hooks/use-color-scheme'
+import { Brand } from '@/constants/theme'
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme()
+  const { session, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color={Brand.celeste} />
+      </View>
+    )
+  }
+
+  if (!session) {
+    return <Redirect href={'/(auth)/login' as any} />
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Brand.celeste,
+        tabBarInactiveTintColor: Brand.gris,
         headerShown: false,
-        tabBarButton: HapticTab
+        tabBarButton: HapticTab,
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopWidth: 1,
+          borderTopColor: '#f0f0f0',
+          paddingTop: 4,
+          height: 62
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'OpenSans_400Regular',
+          fontSize: 11,
+          marginBottom: 4
+        }
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="(home)"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />
+          title: 'Inicio',
+          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="favorites"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />
+          title: 'Favoritos',
+          tabBarIcon: ({ color, size }) => <Ionicons name="heart" size={size} color={color} />
         }}
       />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Perfil',
+          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />
+        }}
+      />
+      <Tabs.Screen name="services" options={{ href: null, headerShown: false }} />
+      <Tabs.Screen name="ratings" options={{ href: null, headerShown: false }} />
     </Tabs>
   )
 }
