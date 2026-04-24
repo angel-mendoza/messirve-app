@@ -66,8 +66,8 @@ export default function RegisterScreen() {
           <Text className="font-bold text-[28px] text-[#1a1a1a] text-center mb-6">Crear cuenta</Text>
 
           {/* Full name */}
-          <View className="mb-4">
-            <Text className="font-sans text-body text-[#444] mb-[6px]">Nombre completo</Text>
+          <View className="mb-3">
+            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Nombre completo</Text>
             <View
               className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
               style={{ borderColor: Brand.celeste + '66' }}
@@ -79,14 +79,14 @@ export default function RegisterScreen() {
                 placeholder="Tu nombre"
                 placeholderTextColor="#aaa"
                 autoCapitalize="words"
-                className="flex-1 font-sans text-body text-[#1a1a1a]"
+                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
               />
             </View>
           </View>
 
           {/* Email */}
-          <View className="mb-4">
-            <Text className="font-sans text-body text-[#444] mb-[6px]">Email</Text>
+          <View className="mb-3">
+            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Email</Text>
             <View
               className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
               style={{ borderColor: Brand.celeste + '66' }}
@@ -100,14 +100,17 @@ export default function RegisterScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                className="flex-1 font-sans text-body text-[#1a1a1a]"
+                autoComplete="off"
+                textContentType="none"
+                importantForAutofill="no"
+                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
               />
             </View>
           </View>
 
           {/* Password */}
-          <View className="mb-8">
-            <Text className="font-sans text-body text-[#444] mb-[6px]">Contraseña</Text>
+          <View className="mb-6">
+            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Contraseña</Text>
             <View
               className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
               style={{ borderColor: Brand.celeste + '66' }}
@@ -119,7 +122,7 @@ export default function RegisterScreen() {
                 placeholder="Mínimo 6 caracteres"
                 placeholderTextColor="#aaa"
                 secureTextEntry={!showPassword}
-                className="flex-1 font-sans text-body text-[#1a1a1a]"
+                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
               />
               <Pressable onPress={() => setShowPassword(!showPassword)} hitSlop={8}>
                 <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color={Brand.gris} />

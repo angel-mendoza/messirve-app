@@ -6,7 +6,8 @@ import {
   OpenSans_700Bold,
   useFonts
 } from '@expo-google-fonts/open-sans'
-import { Stack } from 'expo-router'
+import * as Linking from 'expo-linking'
+import { router, Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
@@ -22,6 +23,44 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontsLoaded) SplashScreen.hideAsync()
+  }, [fontsLoaded])
+
+  useEffect(() => {
+    if (!fontsLoaded) return
+
+    const handleAuthRedirect = (url: string) => {
+      const hashIndex = url.indexOf('#')
+      const queryIndex = url.indexOf('?')
+
+      let paramStr = ''
+      if (hashIndex !== -1) {
+        paramStr = url.slice(hashIndex + 1)
+      } else if (queryIndex !== -1) {
+        paramStr = url.slice(queryIndex + 1)
+      }
+
+      if (!paramStr) return
+
+      const params = new URLSearchParams(paramStr)
+      const error = params.get('error')
+      const type = params.get('type')
+      const accessToken = params.get('access_token')
+      const code = params.get('code')
+
+      if (error) {
+        const desc = params.get('error_description') ?? 'Error al verificar el correo'
+        router.replace({ pathname: '/(auth)/verify-error', params: { message: desc } } as any)
+      } else if (type === 'signup' || accessToken || code) {
+        router.replace('/(auth)/email-verified' as any)
+      }
+    }
+
+    Linking.getInitialURL().then(url => {
+      if (url) handleAuthRedirect(url)
+    })
+
+    const subscription = Linking.addEventListener('url', ({ url }) => handleAuthRedirect(url))
+    return () => subscription.remove()
   }, [fontsLoaded])
 
   if (!fontsLoaded) return null

@@ -1,3 +1,8 @@
+import { MessirveLogo } from '@/components/logo'
+import { Brand } from '@/constants/theme'
+import { useAuth } from '@/lib/auth-context'
+import { Ionicons } from '@expo/vector-icons'
+import { Link } from 'expo-router'
 import { useState } from 'react'
 import {
   Alert,
@@ -9,12 +14,7 @@ import {
   TextInput,
   View
 } from 'react-native'
-import { Link } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useAuth } from '@/lib/auth-context'
-import { MessirveLogo } from '@/components/logo'
-import { Brand } from '@/constants/theme'
 
 export default function LoginScreen() {
   const { signIn } = useAuth()
@@ -60,8 +60,8 @@ export default function LoginScreen() {
           </View>
 
           {/* Email field */}
-          <View className="mb-4">
-            <Text className="font-sans text-body text-[#444] mb-[6px]">Usuario @ mail</Text>
+          <View className="mb-3">
+            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Usuario @ mail</Text>
             <View
               className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
               style={{ borderColor: Brand.celeste + '66' }}
@@ -75,14 +75,17 @@ export default function LoginScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                className="flex-1 font-sans text-body text-[#1a1a1a]"
+                autoComplete="off"
+                textContentType="none"
+                importantForAutofill="no"
+                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
               />
             </View>
           </View>
 
           {/* Password field */}
-          <View className="mb-4">
-            <Text className="font-sans text-body text-[#444] mb-[6px]">Contraseña</Text>
+          <View className="mb-3">
+            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Contraseña</Text>
             <View
               className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
               style={{ borderColor: Brand.celeste + '66' }}
@@ -94,7 +97,7 @@ export default function LoginScreen() {
                 placeholder="••••••••"
                 placeholderTextColor="#aaa"
                 secureTextEntry={!showPassword}
-                className="flex-1 font-sans text-body text-[#1a1a1a]"
+                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
               />
               <Pressable onPress={() => setShowPassword(!showPassword)} hitSlop={8}>
                 <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color={Brand.gris} />

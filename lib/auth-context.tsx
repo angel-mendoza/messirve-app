@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { supabase } from './supabase'
 
 type AuthContextType = {
@@ -43,10 +43,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string,
     fullName: string
   ): Promise<{ error: string | null }> => {
+    const frontendUrl = process.env.EXPO_PUBLIC_FRONTEND_URL!
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } }
+      options: { data: { full_name: fullName }, emailRedirectTo: `${frontendUrl}/auth/confirm`  }
     })
     if (error) return { error: error.message }
     return { error: null }
