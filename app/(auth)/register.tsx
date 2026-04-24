@@ -1,3 +1,8 @@
+import { MessirveLogo } from '@/components/logoAlt'
+import { Brand } from '@/constants/theme'
+import { useAuth } from '@/lib/auth-context'
+import { Ionicons } from '@expo/vector-icons'
+import { Link, router } from 'expo-router'
 import { useState } from 'react'
 import {
   Alert,
@@ -9,18 +14,13 @@ import {
   TextInput,
   View
 } from 'react-native'
-import { Link, router } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useAuth } from '@/lib/auth-context'
-import { MessirveLogo } from '@/components/logo'
-import { Brand } from '@/constants/theme'
 
 export default function RegisterScreen() {
   const { signUp } = useAuth()
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('123456789')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -60,7 +60,7 @@ export default function RegisterScreen() {
 
           {/* Logo */}
           <View className="items-center mb-6">
-            <MessirveLogo size="md" />
+            <MessirveLogo size="lg" />
           </View>
 
           <Text className="font-bold text-[28px] text-[#1a1a1a] text-center mb-6">Crear cuenta</Text>
@@ -150,6 +150,9 @@ export default function RegisterScreen() {
                 <Text className="font-bold text-sm text-celeste">Ingresar</Text>
               </Pressable>
             </Link>
+          </View>
+          <View className="flex-row justify-center">
+            <Text className="font-bold text-[28px] text-dorado text-center leading-[44px] mt-5">Messirve te sirve!</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

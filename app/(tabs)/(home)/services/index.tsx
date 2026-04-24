@@ -1,12 +1,12 @@
+import { MessirveLogo } from '@/components/logoAlt'
+import { Brand } from '@/constants/theme'
+import { supabase } from '@/lib/supabase'
+import type { Category } from '@/types/database'
+import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native'
-import { router } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { supabase } from '@/lib/supabase'
-import { MessirveLogo } from '@/components/logo'
-import type { Category } from '@/types/database'
-import { Brand } from '@/constants/theme'
 
 const CATEGORY_COLORS = [
   '#72B8E6',
@@ -43,54 +43,52 @@ export default function ServiceCategoriesScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#E6F4FE]">
-      {/* Header */}
-      <View className="flex-row items-center px-5 pt-4 pb-2">
-        <Pressable onPress={() => router.back()} hitSlop={8} className="mr-3">
+      {/* Back button */}
+      <View className="px-5 pt-4 pb-1">
+        <Pressable onPress={() => router.back()} hitSlop={8} className="self-start">
           <Ionicons name="arrow-back" size={24} color={Brand.celeste} />
         </Pressable>
-        <View className="flex-1 items-center">
-          <MessirveLogo size="sm" />
-        </View>
-        <View className="w-8" />
+      </View>
+
+      {/* Header with logo */}
+      <View className="items-center pt-8 pb-6  mt-2">
+        <MessirveLogo size="lg" />
       </View>
 
       {/* Title */}
-      <View className="px-6 pb-6 pt-2">
+      <View className="px-6 pt-2 pb-6">
         <Text className="font-bold text-[28px] text-[#1a1a1a] text-center">Servicios</Text>
         <Text className="font-light text-sm text-[#666] text-center mt-1">Seleccioná una categoría</Text>
       </View>
 
-      {/* Categories grid */}
+      {/* Categories list */}
       <FlatList
         data={categories}
         keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperStyle={{ gap: 12, paddingHorizontal: 16 }}
-        contentContainerStyle={{ gap: 12, paddingBottom: 32 }}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => (
           <Pressable
             onPress={() => router.push(`/services/category/${item.slug}` as any)}
-            className="flex-1 rounded-3xl items-center py-6 px-4 bg-white"
+            className="flex-row items-center bg-white rounded-2xl px-4 py-[14px]"
             style={({ pressed }) => ({
               opacity: pressed ? 0.85 : 1,
-              transform: [{ scale: pressed ? 0.97 : 1 }],
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
+              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.06)'
             })}
           >
-            {/* Icon circle */}
             <View
-              className="rounded-full items-center justify-center mb-3 w-[72px] h-[72px]"
-              style={{ backgroundColor: CATEGORY_COLORS[index % CATEGORY_COLORS.length] + '22' }}
+              className="rounded-full items-center justify-center w-11 h-11 mr-4"
+              style={{ backgroundColor: CATEGORY_COLORS[index % CATEGORY_COLORS.length] + '33' }}
             >
-              <Text className="text-[32px]">{item.emoji ?? '🏷️'}</Text>
+              <Text className="text-[20px]">{item.emoji ?? '🏷️'}</Text>
             </View>
             <Text
-              className="font-bold text-xs text-[#333] text-center leading-[17px]"
-              numberOfLines={3}
+              className="flex-1 font-bold text-[12px] text-[#1a1a1a]"
+              style={{ letterSpacing: 0.4 }}
             >
-              {item.name}
+              {item.name.toUpperCase()}
             </Text>
+            <Ionicons name="chevron-forward" size={18} color={Brand.gris} />
           </Pressable>
         )}
       />

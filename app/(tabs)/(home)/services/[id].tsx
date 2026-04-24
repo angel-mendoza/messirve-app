@@ -433,13 +433,22 @@ export default function ServiceDetailScreen() {
                     const name = (comment.profile?.full_name ?? 'Usuario').normalize('NFC')
                     const initial = name[0].toUpperCase()
                     const isOwn = comment.user_id === user?.id
+                    const avatarUrl = comment.profile?.avatar_url
                     return (
                       <View key={comment.id} className="flex-row gap-3">
                         <View
-                          className="rounded-full items-center justify-center shrink-0 w-9 h-9"
+                          className="rounded-full items-center justify-center shrink-0 w-9 h-9 overflow-hidden"
                           style={{ backgroundColor: Brand.celeste + '33' }}
                         >
-                          <Text className="font-bold text-sm text-celeste">{initial}</Text>
+                          {avatarUrl ? (
+                            <Image
+                              source={{ uri: avatarUrl }}
+                              style={{ width: 36, height: 36 }}
+                              contentFit="cover"
+                            />
+                          ) : (
+                            <Text className="font-bold text-sm text-celeste">{initial}</Text>
+                          )}
                         </View>
                         <View
                           className="flex-1 rounded-2xl rounded-tl-sm p-3"

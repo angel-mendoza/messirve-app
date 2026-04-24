@@ -1,8 +1,8 @@
-import { Pressable, ScrollView, Text, View } from 'react-native'
-import { router } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
-import { MessirveLogo } from '@/components/logo'
+import { MessirveLogo } from '@/components/logoAlt'
 import { Brand } from '@/constants/theme'
+import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
+import { Pressable, ScrollView, Text, View } from 'react-native'
 
 type MenuCard = {
   id: string
@@ -16,15 +16,15 @@ type MenuCard = {
 
 export default function HomeScreen() {
   const cards: MenuCard[] = [
-    {
-      id: 'info',
-      title: 'Información',
-      subtitle: 'para el inmigrante',
-      icon: 'information-circle',
-      color: Brand.celeste,
-      onPress: () => {},
-      available: false
-    },
+    // {
+    //   id: 'info',
+    //   title: 'Información',
+    //   subtitle: 'para el inmigrante',
+    //   icon: 'information-circle',
+    //   color: Brand.celeste,
+    //   onPress: () => {},
+    //   available: false
+    // },
     {
       id: 'services',
       title: 'Servicios',
@@ -53,14 +53,11 @@ export default function HomeScreen() {
       contentContainerStyle={{ paddingBottom: 24 }}
     >
       {/* Header with logo */}
-      <View className="items-center pt-8 pb-6">
-        <MessirveLogo size="lg" />
+      <View className="items-center pt-8 pb-6 mb-10 mt-2">
+        <MessirveLogo size="lx" />
       </View>
 
-      {/* Section label */}
-      <View className="px-6 mb-4">
-        <Text className="font-sans text-[13px] text-[#888] tracking-[1px] uppercase">Explorar</Text>
-      </View>
+
 
       {/* Cards */}
       <View className="px-5 gap-4">

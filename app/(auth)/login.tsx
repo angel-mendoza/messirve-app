@@ -1,8 +1,8 @@
-import { MessirveLogo } from '@/components/logo'
+import { MessirveLogo } from '@/components/logoAlt'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
 import { Ionicons } from '@expo/vector-icons'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { useState } from 'react'
 import {
   Alert,
@@ -19,7 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function LoginScreen() {
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useState('123456789')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -50,12 +50,12 @@ export default function LoginScreen() {
           </View>
 
           {/* Welcome text */}
-          <View className="mb-8">
-            <Text className="font-bold text-[36px] text-[#1a1a1a] text-center leading-[44px]">
+          <View className="mb-10">
+            <Text className="font-bold text-[32px] text-[#1a1a1a] text-center leading-[44px]">
               Bienvenidos a
             </Text>
-            <Text className="font-bold text-[36px] text-celeste text-center leading-[44px]">
-              todos los viajeros!
+            <Text className="font-bold text-[32px] text-celeste text-center leading-[35px]">
+              todos los argentinos y uruguayos por el mundo!
             </Text>
           </View>
 
@@ -107,7 +107,7 @@ export default function LoginScreen() {
 
           {/* Recover password */}
           <View className="flex-row justify-end mb-8">
-            <Pressable>
+            <Pressable onPress={() => router.push('/(auth)/forgot-password' as any)} hitSlop={8}>
               <Text className="font-sans text-sm text-celeste">Recuperar contraseña</Text>
             </Pressable>
           </View>
@@ -148,6 +148,9 @@ export default function LoginScreen() {
                 <Text className="font-bold text-sm text-celeste">Crear cuenta</Text>
               </Pressable>
             </Link>
+          </View>
+          <View className="flex-row justify-center">
+            <Text className="font-bold text-[28px] text-dorado text-center leading-[44px] mt-5">Messirve te sirve!</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -2,13 +2,14 @@ import { Image } from 'expo-image'
 import { View } from 'react-native'
 
 type Props = {
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'lx'
 }
 
 const sizes = {
   sm: 80,
   md: 120,
-  lg: 180
+  lg: 180,
+  lx: 250
 }
 
 export function MessirveLogo({ size = 'md' }: Props) {
