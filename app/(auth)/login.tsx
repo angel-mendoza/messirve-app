@@ -37,10 +37,10 @@ export default function LoginScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white ">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 28, paddingTop: 32, paddingBottom: 24 }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 28, paddingVertical: 24 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -49,15 +49,8 @@ export default function LoginScreen() {
             <MessirveLogo size="lg" />
           </View>
 
-          {/* Welcome text */}
-          <View className="mb-10">
-            <Text className="font-bold text-[32px] text-[#1a1a1a] text-center leading-[44px]">
-              Bienvenidos a
-            </Text>
-            <Text className="font-bold text-[32px] text-celeste text-center leading-[35px]">
-              todos los argentinos y uruguayos por el mundo!
-            </Text>
-          </View>
+          <Text className="font-bold text-[28px] text-[#1a1a1a] text-center mb-6">Bienvenidos</Text>
+
 
           {/* Email field */}
           <View className="mb-3">
@@ -148,9 +141,6 @@ export default function LoginScreen() {
                 <Text className="font-bold text-sm text-celeste">Crear cuenta</Text>
               </Pressable>
             </Link>
-          </View>
-          <View className="flex-row justify-center">
-            <Text className="font-bold text-[28px] text-dorado text-center leading-[44px] mt-5">Messirve te sirve!</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

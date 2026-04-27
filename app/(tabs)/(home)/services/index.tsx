@@ -51,14 +51,13 @@ export default function ServiceCategoriesScreen() {
       </View>
 
       {/* Header with logo */}
-      <View className="items-center pt-8 pb-6  mt-2">
-        <MessirveLogo size="lg" />
+      <View className="items-center pb-4  mt-2">
+        <MessirveLogo size="md" />
       </View>
 
       {/* Title */}
       <View className="px-6 pt-2 pb-6">
-        <Text className="font-bold text-[28px] text-[#1a1a1a] text-center">Servicios</Text>
-        <Text className="font-light text-sm text-[#666] text-center mt-1">Seleccioná una categoría</Text>
+        <Text className="font-bold text-[24px] text-[#1a1a1a] text-center">Servicios, emprendimientos y comercios de compatriotas en <Text className="font-bold text-celeste">Barcelona</Text></Text>
       </View>
 
       {/* Categories list */}
@@ -92,6 +91,9 @@ export default function ServiceCategoriesScreen() {
           </Pressable>
         )}
       />
+      <View className="flex-row justify-center">
+        <Text className="font-bold text-[28px] text-dorado text-center leading-[44px] mt-5 mb-8">Messirve te sirve!</Text>
+      </View>
     </SafeAreaView>
   )
 }

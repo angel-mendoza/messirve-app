@@ -53,14 +53,22 @@ export default function HomeScreen() {
       contentContainerStyle={{ paddingBottom: 24 }}
     >
       {/* Header with logo */}
-      <View className="items-center pt-8 pb-6 mb-10 mt-2">
+      <View className="items-center pt-2 pb-4 mb-8 mt-2">
         <MessirveLogo size="lx" />
       </View>
 
-
+      {/* Welcome text */}
+      <View className="mb-12">
+        <Text className="font-bold text-[32px] text-[#1a1a1a] text-center leading-[44px]">
+          Bienvenidos a
+        </Text>
+        <Text className="font-bold text-[32px] text-celeste text-center leading-[35px]">
+          todos los argentinos y uruguayos por el mundo!
+        </Text>
+      </View>
 
       {/* Cards */}
-      <View className="px-5 gap-4">
+      <View className="px-5 gap-4 mb-12">
         {cards.map((card) => (
           <Pressable
             key={card.id}
@@ -92,6 +100,10 @@ export default function HomeScreen() {
             </View>
           </Pressable>
         ))}
+      </View>
+
+      <View className="flex-row justify-center">
+        <Text className="font-bold text-[28px] text-dorado text-center leading-[44px]">Messirve te sirve!</Text>
       </View>
     </ScrollView>
   )
