@@ -49,7 +49,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
       options: { data: { full_name: fullName }, emailRedirectTo: `${frontendUrl}/auth/confirm`  }
     })
-    if (error) return { error: error.message }
+    if (error) {
+      console.log('[signUp error]', JSON.stringify(error, null, 2))
+      return { error: error.message }
+    }
     return { error: null }
   }
 
