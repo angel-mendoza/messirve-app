@@ -131,7 +131,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="px-5 pt-6 pb-4">
-        <Text className="font-bold text-[26px] text-[#1a1a1a]">Mi perfil</Text>
+        <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-[26px] text-[#1a1a1a]">Mi perfil</Text>
       </View>
 
       {/* Avatar */}

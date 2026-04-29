@@ -1,12 +1,12 @@
+import { ServiceCard } from '@/components/service-card'
+import { Brand } from '@/constants/theme'
+import { useAuth } from '@/lib/auth-context'
+import { supabase } from '@/lib/supabase'
+import type { ServiceWithStats } from '@/types/database'
+import { router, useFocusEffect } from 'expo-router'
 import { useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, Text, View } from 'react-native'
-import { router, useFocusEffect } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/lib/auth-context'
-import { ServiceCard } from '@/components/service-card'
-import type { ServiceWithStats } from '@/types/database'
-import { Brand } from '@/constants/theme'
 
 export default function FavoritesScreen() {
   const { user } = useAuth()
@@ -96,14 +96,16 @@ export default function FavoritesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="px-5 pt-6 pb-4">
-        <Text className="font-bold text-[26px] text-[#1a1a1a]">Mis favoritos</Text>
+        <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-[26px] text-[#1a1a1a]">Mis favoritos</Text>
         <Text className="font-light text-sm text-[#888] mt-0.5">Servicios que te gustaron</Text>
       </View>
 
       {services.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-5xl mb-4">💛</Text>
-          <Text className="font-bold text-lg text-[#333] text-center">Aún no tenés favoritos</Text>
+          <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-lg text-[#333] text-center">
+            Aún no tenés favoritos
+          </Text>
           <Text className="font-light text-sm text-[#888] text-center mt-2">
             Explorá los servicios y agregá los que más te gusten
           </Text>

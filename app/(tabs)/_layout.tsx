@@ -1,12 +1,14 @@
 import { Redirect, Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { ActivityIndicator, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuth } from '@/lib/auth-context'
 import { HapticTab } from '@/components/haptic-tab'
 import { Brand } from '@/constants/theme'
 
 export default function TabLayout() {
   const { session, loading } = useAuth()
+  const insets = useSafeAreaInsets()
 
   if (loading) {
     return (
@@ -32,7 +34,8 @@ export default function TabLayout() {
           borderTopWidth: 1,
           borderTopColor: '#f0f0f0',
           paddingTop: 4,
-          height: 62
+          paddingBottom: insets.bottom,
+          height: 62 + insets.bottom
         },
         tabBarLabelStyle: {
           fontFamily: 'OpenSans_400Regular',
