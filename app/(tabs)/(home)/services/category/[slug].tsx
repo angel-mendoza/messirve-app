@@ -116,7 +116,7 @@ export default function ServicesByCategoryScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
-      <View className="px-4 pt-3 pb-4 bg-celeste">
+      <View className="px-4 pt-4 pb-4 bg-celeste">
         <View className="flex-row items-center mb-3">
           <Pressable onPress={() => router.back()} hitSlop={8} className="mr-3">
             <Ionicons name="arrow-back" size={24} color="#fff" />

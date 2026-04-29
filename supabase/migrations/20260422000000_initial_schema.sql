@@ -9,6 +9,7 @@ create table if not exists public.categories (
   name text not null,
   slug text not null unique,
   emoji text,
+  "order" integer not null default 0,
   created_at timestamptz not null default now()
 );
 alter table public.categories enable row level security;
@@ -18,14 +19,14 @@ create policy "Public read categories"
   on public.categories for select using (true);
 
 -- Insert default categories
-insert into public.categories (name, slug, emoji) values
-  ('HOGAR', 'hogar', '🏠'),
-  ('GASTRONOMÍA', 'gastronomia', '🍽️'),
-  ('SALUD & BIENESTAR', 'salud-bienestar', '💊'),
-  ('ARTE & ENTRETENIMIENTO', 'arte-entretenimiento', '🎨'),
-  ('INDUMENTARIA & BELLEZA', 'indumentaria-belleza', '👗'),
-  ('HOSPEDAJE PARA TURISTAS', 'hospedaje-turistas', '🏨'),
-  ('ASESORÍA & GESTORÍA PARA INMIGRANTES', 'asesoria-gestoria', '📋')
+insert into public.categories (name, slug, emoji, "order") values
+  ('HOGAR', 'hogar', '🏠', 1),
+  ('GASTRONOMÍA', 'gastronomia', '🍽️', 2),
+  ('SALUD & BIENESTAR', 'salud-bienestar', '💊', 3),
+  ('ARTE & ENTRETENIMIENTO', 'arte-entretenimiento', '🎨', 4),
+  ('INDUMENTARIA & BELLEZA', 'indumentaria-belleza', '👗', 5),
+  ('HOSPEDAJE PARA TURISTAS', 'hospedaje-turistas', '🏨', 6),
+  ('ASESORÍA & GESTORÍA PARA INMIGRANTES', 'asesoria-gestoria', '📋', 7)
 on conflict (slug) do nothing;
 
 -- =============================================

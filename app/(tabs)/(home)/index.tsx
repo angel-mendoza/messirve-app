@@ -1,110 +1,95 @@
 import { MessirveLogo } from '@/components/logoAlt'
 import { Brand } from '@/constants/theme'
+import { supabase } from '@/lib/supabase'
+import type { Category } from '@/types/database'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-type MenuCard = {
-  id: string
-  title: string
-  subtitle: string
-  icon: string
-  color: string
-  onPress: () => void
-  available: boolean
-}
+const CATEGORY_COLORS = [
+  '#72B8E6',
+  '#C9A96D',
+  '#82C4A0',
+  '#E891A0',
+  '#9B8EC4',
+  '#E8A66A',
+  '#6AB8C8'
+]
 
 export default function HomeScreen() {
-  const cards: MenuCard[] = [
-    // {
-    //   id: 'info',
-    //   title: 'Información',
-    //   subtitle: 'para el inmigrante',
-    //   icon: 'information-circle',
-    //   color: Brand.celeste,
-    //   onPress: () => {},
-    //   available: false
-    // },
-    {
-      id: 'services',
-      title: 'Servicios',
-      subtitle: 'Encuentra todo lo que necesitas',
-      icon: 'grid',
-      color: Brand.dorado,
-      onPress: () => router.push('/services' as any),
-      available: true
-    },
-    {
-      id: 'events',
-      title: 'Eventos',
-      subtitle: 'Lo que pasa en Barcelona',
-      icon: 'calendar',
-      color: '#6B7A99',
-      onPress: () => {},
-      available: false
-    }
-  ]
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('categories')
+      .select('*')
+      .order('order')
+      .then(({ data }) => {
+        if (data) setCategories(data)
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 items-center justify-center bg-[#E6F4FE]">
+        <ActivityIndicator size="large" color={Brand.celeste} />
+      </SafeAreaView>
+    )
+  }
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: '#E6F4FE' }}
-      contentInsetAdjustmentBehavior="automatic"
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 24 }}
-    >
+    <SafeAreaView className="flex-1 bg-[#E6F4FE]">
       {/* Header with logo */}
-      <View className="items-center pt-2 pb-4 mb-8 mt-2">
-        <MessirveLogo size="lx" />
+      <View className="items-center pb-4 mt-2">
+        <MessirveLogo size="md" />
       </View>
 
-      {/* Welcome text */}
-      <View className="mb-12">
-        <Text className="font-bold text-[32px] text-[#1a1a1a] text-center leading-[44px]">
-          Bienvenidos a
-        </Text>
-        <Text className="font-bold text-[32px] text-celeste text-center leading-[35px]">
-          todos los argentinos y uruguayos por el mundo!
+      {/* Title */}
+      <View className="px-6 pt-2 pb-6">
+        <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-[24px] text-[#1a1a1a] text-center">
+          Servicios, emprendimientos y comercios de compatriotas en{' '}
+          <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-celeste">Barcelona</Text>
         </Text>
       </View>
 
-      {/* Cards */}
-      <View className="px-5 gap-4 mb-12">
-        {cards.map((card) => (
+      {/* Categories list */}
+      <FlatList
+        data={categories}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingHorizontal: 16, gap: 10, paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item, index }) => (
           <Pressable
-            key={card.id}
-            onPress={card.onPress}
-            disabled={!card.available}
-            className="rounded-3xl overflow-hidden"
+            onPress={() => router.push(`/services/category/${item.slug}` as any)}
+            className="flex-row items-center bg-white rounded-2xl px-4 py-[14px]"
             style={({ pressed }) => ({
-              opacity: pressed ? 0.9 : card.available ? 1 : 0.85,
-              transform: [{ scale: pressed ? 0.98 : 1 }],
-              borderCurve: 'continuous',
-              boxShadow: pressed ? '0 4px 12px rgba(0, 0, 0, 0.08)' : '0 4px 12px rgba(0, 0, 0, 0.12)'
+              opacity: pressed ? 0.85 : 1,
+              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.06)'
             })}
           >
-            <View className="p-6 min-h-[110px]" style={{ backgroundColor: card.color }}>
-              <View className="flex-row items-center justify-between">
-                <View className="flex-1">
-                  <Text className="font-bold text-[22px] text-white leading-7">{card.title}</Text>
-                  <Text className="font-light text-sm text-white/85 mt-0.5">{card.subtitle}</Text>
-                  {!card.available && (
-                    <View className="mt-3 self-start rounded-full px-3 py-1 bg-black/20">
-                      <Text className="font-sans text-[11px] text-white/80">Próximamente</Text>
-                    </View>
-                  )}
-                </View>
-                <View className="rounded-full items-center justify-center ml-4 w-14 h-14 bg-white/25">
-                  <Ionicons name={card.icon as any} size={28} color="#fff" />
-                </View>
-              </View>
+            <View
+              className="rounded-full items-center justify-center w-11 h-11 mr-4"
+              style={{ backgroundColor: CATEGORY_COLORS[index % CATEGORY_COLORS.length] + '33' }}
+            >
+              <Text className="text-[20px]">{item.emoji ?? '🏷️'}</Text>
             </View>
+            <Text className="flex-1 font-bold text-[12px] text-[#1a1a1a]" style={{ letterSpacing: 0.4 }}>
+              {item.name.toUpperCase()}
+            </Text>
+            <Ionicons name="chevron-forward" size={18} color={Brand.gris} />
           </Pressable>
-        ))}
-      </View>
+        )}
+      />
 
       <View className="flex-row justify-center">
-        <Text className="font-bold text-[28px] text-dorado text-center leading-[44px]">Messirve te sirve!</Text>
+        <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-[28px] text-dorado text-center  mt-5 mb-8 uppercase">
+          Messirve te sirve!
+        </Text>
       </View>
-    </ScrollView>
+    </SafeAreaView>
   )
 }

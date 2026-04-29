@@ -1,3 +1,11 @@
+import { StarRating } from '@/components/star-rating'
+import { Brand } from '@/constants/theme'
+import { useAuth } from '@/lib/auth-context'
+import { supabase } from '@/lib/supabase'
+import type { Profile, Service, ServiceComment } from '@/types/database'
+import { Ionicons } from '@expo/vector-icons'
+import { Image } from 'expo-image'
+import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
 import {
   ActivityIndicator,
@@ -13,16 +21,7 @@ import {
   TextInput,
   View
 } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
-import { Image } from 'expo-image'
-import { Galeria } from '@nandorojo/galeria'
-import { Ionicons } from '@expo/vector-icons'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { supabase } from '@/lib/supabase'
-import { useAuth } from '@/lib/auth-context'
-import { StarRating } from '@/components/star-rating'
-import type { Service, ServiceComment, Profile } from '@/types/database'
-import { Brand } from '@/constants/theme'
 
 const { width } = Dimensions.get('window')
 
@@ -211,26 +210,22 @@ export default function ServiceDetailScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Photo gallery */}
-          <View className="h-[280px]" style={{ backgroundColor: Brand.celeste + '33' }}>
+          <View className="h-[280px] mt-4" style={{ backgroundColor: Brand.celeste + '33' }}>
             {photos.length > 0 ? (
               <>
-                <Galeria urls={photos}>
-                  <FlatList
-                    data={photos}
-                    keyExtractor={(_, i) => String(i)}
-                    horizontal
-                    pagingEnabled
-                    showsHorizontalScrollIndicator={false}
-                    onMomentumScrollEnd={(e) => {
-                      setPhotoIndex(Math.round(e.nativeEvent.contentOffset.x / width))
-                    }}
-                    renderItem={({ item, index }) => (
-                      <Galeria.Image index={index}>
-                        <Image source={{ uri: item }} style={{ width, height: 280 }} contentFit="cover" />
-                      </Galeria.Image>
-                    )}
-                  />
-                </Galeria>
+                <FlatList
+                  data={photos}
+                  keyExtractor={(_, i) => String(i)}
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  onMomentumScrollEnd={(e) => {
+                    setPhotoIndex(Math.round(e.nativeEvent.contentOffset.x / width))
+                  }}
+                  renderItem={({ item }) => (
+                    <Image source={{ uri: item }} style={{ width, height: 280 }} contentFit="cover" />
+                  )}
+                />
                 {photos.length > 1 && (
                   <View className="absolute bottom-3 left-0 right-0 flex-row justify-center gap-1">
                     {photos.map((_, i) => (

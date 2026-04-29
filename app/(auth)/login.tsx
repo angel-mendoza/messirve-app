@@ -19,7 +19,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 export default function LoginScreen() {
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('123456789')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -54,7 +54,7 @@ export default function LoginScreen() {
 
           {/* Email field */}
           <View className="mb-3">
-            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Usuario @ mail</Text>
+            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Email</Text>
             <View
               className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
               style={{ borderColor: Brand.celeste + '66' }}
@@ -120,18 +120,18 @@ export default function LoginScreen() {
           {/* Divider */}
           <View className="flex-row items-center mb-6">
             <View className="flex-1 h-px" style={{ backgroundColor: Brand.celeste + '66' }} />
-            <Text className="mx-3 text-celeste text-lg">@</Text>
+            {/* <Text className="mx-3 text-celeste text-lg">@</Text> */}
             <View className="flex-1 h-px" style={{ backgroundColor: Brand.celeste + '66' }} />
           </View>
 
           {/* Social buttons (UI only) */}
-          <View className="flex-row justify-center gap-4 mb-8">
+          {/* <View className="flex-row justify-center gap-4 mb-8">
             {['logo-google', 'logo-facebook', 'logo-apple'].map((icon) => (
               <View key={icon} className="rounded-full items-center justify-center w-[52px] h-[52px] bg-[#f0f0f0]">
                 <Ionicons name={icon as any} size={24} color="#555" />
               </View>
             ))}
-          </View>
+          </View> */}
 
           {/* Register link */}
           <View className="flex-row justify-center">
