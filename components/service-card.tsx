@@ -148,7 +148,7 @@ export function ServiceCard({ service, onPress, onLike }: Props) {
             {service.phone ? (
               <>
                 <Text className="text-[#ddd] mx-0.5">·</Text>
-                <Ionicons name="call-outline" size={13} color="#aaa" />
+                <Ionicons name="logo-whatsapp" size={13} color="#aaa" />
                 <Text className="font-sans text-xs text-[#aaa]">{service.phone}</Text>
               </>
             ) : null}

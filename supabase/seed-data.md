@@ -32,7 +32,7 @@ Contraseña de todos: `Test1234!`
 | La Cocina de Mamá | Carrer de Muntaner, 55 | €10–15/persona | +34 935 678 901 | — | @lacocinademama_bcn |
 | Café del Viajero | Carrer de la Diputació, 182 | €5–12/persona | +34 936 789 012 | cafedelviajero.com | @cafedelviajero |
 
-### 💊 SALUD & BIENESTAR
+### 🧘 SALUD & BIENESTAR
 
 | Nombre | Dirección | Precio | Teléfono | Web | Instagram |
 |--------|-----------|--------|----------|-----|-----------|
@@ -71,3 +71,13 @@ Contraseña de todos: `Test1234!`
 | Gestoría Legal Inmigrante | Carrer de Pelai, 12 | Consulta desde €50 / Trámite desde €150 | +34 934 400 500 | gestorialegal.es | @gestorialegalinmigrante |
 | Asesoría Laboral & Fiscal BCN | Rambla de Catalunya, 56 | Desde €60/consulta | +34 935 500 600 | — | @asesorialaboralbcn |
 | Traducción & Apostilla Express | Carrer de Pau Claris, 96 | Traducción desde €30/página | +34 936 600 700 | traduccionexpress.es | @traduccionexpress |
+
+### 💬 GRUPOS ÚTILES DE WHATSAPP
+
+> En esta categoría los campos `address`, `phone` e `instagram` quedan vacíos. El link de invitación va en `website`. El ícono de WhatsApp se configura manualmente en Supabase.
+
+| Nombre | Descripción | Link de invitación |
+|--------|-------------|-------------------|
+| Latinos en Barcelona — General | Comunidad general de latinoamericanos en Barcelona | https://chat.whatsapp.com/ejemplo1 |
+| Trabajo & Empleo BCN | Ofertas laborales y consejos para encontrar trabajo en Barcelona | https://chat.whatsapp.com/ejemplo2 |
+| Trámites & Documentación España | Dudas sobre NIE, TIE, empadronamiento y residencia | https://chat.whatsapp.com/ejemplo3 |

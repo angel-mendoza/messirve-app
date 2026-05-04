@@ -50,9 +50,9 @@ export default function HomeScreen() {
 
       {/* Title */}
       <View className="px-6 pt-2 pb-6">
-        <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-[24px] text-[#1a1a1a] text-center">
-          Servicios, emprendimientos y comercios de compatriotas en{' '}
-          <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-celeste">Barcelona</Text>
+        <Text className="text-[26px] text-[#1a1a1a] text-center">
+          Servicios y emprendimientos de compatriotas en{' '}
+          <Text className="text-celeste">Barcelona</Text>
         </Text>
       </View>
 
@@ -86,7 +86,7 @@ export default function HomeScreen() {
       />
 
       <View className="flex-row justify-center">
-        <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-[28px] text-dorado text-center  mt-5 mb-8 uppercase">
+        <Text className="font-bold text-[24px] text-dorado text-center mb-6 uppercase">
           Messirve te sirve!
         </Text>
       </View>

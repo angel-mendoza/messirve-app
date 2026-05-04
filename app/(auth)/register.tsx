@@ -144,7 +144,7 @@ export default function RegisterScreen() {
 
           {/* Login link */}
           <View className="flex-row justify-center">
-            <Text className="font-sans text-sm text-[#666]">¿Ya tienes cuenta?{' '}</Text>
+            <Text className="font-sans text-sm text-[#666]">¿Ya tenés cuenta?{' '}</Text>
             <Link href={'/(auth)/login' as any} asChild>
               <Pressable>
                 <Text className="font-bold text-sm text-celeste">Ingresar</Text>
@@ -152,7 +152,7 @@ export default function RegisterScreen() {
             </Link>
           </View>
           <View className="flex-row justify-center">
-            <Text className="font-bold text-[28px] text-dorado text-center leading-[44px] mt-5">Messirve te sirve!</Text>
+            <Text className="font-bold text-[28px] text-dorado text-center leading-[44px] mt-5 uppercase">Messirve te sirve!</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -49,8 +49,11 @@ export default function LoginScreen() {
             <MessirveLogo size="lg" />
           </View>
 
-          <Text className="font-bold text-[28px] text-[#1a1a1a] text-center mb-6">Bienvenidos</Text>
-
+        <Text  className="font-bold  text-[28px] text-[#1a1a1a] text-center mb-6 leading-[38px]">
+          Bienvenidos a todos los{' '}
+          <Text className="text-celeste">Argentinos y Uruguayos</Text>{' '}
+          por el mundo!
+        </Text>
 
           {/* Email field */}
           <View className="mb-3">

@@ -327,8 +327,17 @@ export default function ServiceDetailScreen() {
                   className="flex-row items-center gap-3"
                   onPress={() => Linking.openURL(`tel:${service.phone}`)}
                 >
-                  <Ionicons name="call" size={18} color={Brand.celeste} />
+                  <Ionicons name="logo-whatsapp" size={18} color={Brand.celeste} />
                   <Text className="font-sans text-sm text-celeste">{service.phone}</Text>
+                </Pressable>
+              )}
+              {service.instagram && (
+                <Pressable
+                  className="flex-row items-center gap-3"
+                  onPress={() => Linking.openURL(`https://instagram.com/${service.instagram!.replace('@', '')}`)}
+                >
+                  <Ionicons name="logo-instagram" size={18} color={Brand.celeste} />
+                  <Text className="font-sans text-sm text-celeste">{service.instagram}</Text>
                 </Pressable>
               )}
               {service.website && (
@@ -340,15 +349,6 @@ export default function ServiceDetailScreen() {
                   <Text className="font-sans text-sm text-celeste" numberOfLines={1}>
                     {service.website}
                   </Text>
-                </Pressable>
-              )}
-              {service.instagram && (
-                <Pressable
-                  className="flex-row items-center gap-3"
-                  onPress={() => Linking.openURL(`https://instagram.com/${service.instagram!.replace('@', '')}`)}
-                >
-                  <Ionicons name="logo-instagram" size={18} color={Brand.celeste} />
-                  <Text className="font-sans text-sm text-celeste">{service.instagram}</Text>
                 </Pressable>
               )}
             </View>

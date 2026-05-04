@@ -96,17 +96,17 @@ export default function FavoritesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="px-5 pt-6 pb-4">
-        <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-[26px] text-[#1a1a1a]">Mis favoritos</Text>
+        <Text className="text-[26px] text-[#1a1a1a]">Mis favoritos</Text>
         <Text className="font-light text-sm text-[#888] mt-0.5">Servicios que te gustaron</Text>
       </View>
 
       {services.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-5xl mb-4">💛</Text>
-          <Text style={{ fontFamily: 'MadimiOne_400Regular' }} className="text-lg text-[#333] text-center">
+          <Text className="font-bold text-5xl mb-4">💛</Text>
+          <Text  className="text-lg text-[#333] text-center">
             Aún no tenés favoritos
           </Text>
-          <Text className="font-light text-sm text-[#888] text-center mt-2">
+          <Text className="font-bold text-sm text-[#888] text-center mt-2">
             Explorá los servicios y agregá los que más te gusten
           </Text>
         </View>

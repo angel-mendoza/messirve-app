@@ -22,11 +22,12 @@ create policy "Public read categories"
 insert into public.categories (name, slug, emoji, "order") values
   ('HOGAR', 'hogar', '🏠', 1),
   ('GASTRONOMÍA', 'gastronomia', '🍽️', 2),
-  ('SALUD & BIENESTAR', 'salud-bienestar', '💊', 3),
+  ('SALUD & BIENESTAR', 'salud-bienestar', '🧘', 3),
   ('ARTE & ENTRETENIMIENTO', 'arte-entretenimiento', '🎨', 4),
   ('INDUMENTARIA & BELLEZA', 'indumentaria-belleza', '👗', 5),
   ('HOSPEDAJE PARA TURISTAS', 'hospedaje-turistas', '🏨', 6),
-  ('ASESORÍA & GESTORÍA PARA INMIGRANTES', 'asesoria-gestoria', '📋', 7)
+  ('ASESORÍA & GESTORÍA PARA INMIGRANTES', 'asesoria-gestoria', '📋', 8),
+  ('GRUPOS ÚTILES DE WHATSAPP', 'grupos-whatsapp', '💬', 7)
 on conflict (slug) do nothing;
 
 -- =============================================

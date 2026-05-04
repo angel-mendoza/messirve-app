@@ -27,10 +27,11 @@ CREATE POLICY "Public read categories" ON public.categories FOR SELECT USING (tr
 INSERT INTO public.categories (name, slug, emoji) VALUES
   ('HOGAR', 'hogar', '🏠'),
   ('GASTRONOMÍA', 'gastronomia', '🍽️'),
-  ('SALUD & BIENESTAR', 'salud-bienestar', '💊'),
+  ('SALUD & BIENESTAR', 'salud-bienestar', '🧘'),
   ('ARTE & ENTRETENIMIENTO', 'arte-entretenimiento', '🎨'),
   ('INDUMENTARIA & BELLEZA', 'indumentaria-belleza', '👗'),
   ('HOSPEDAJE PARA TURISTAS', 'hospedaje-turistas', '🏨'),
+  ('GRUPOS ÚTILES DE WHATSAPP', 'grupos-whatsapp', '💬'),
   ('ASESORÍA & GESTORÍA PARA INMIGRANTES', 'asesoria-gestoria', '📋')
 ON CONFLICT (slug) DO NOTHING;
 
