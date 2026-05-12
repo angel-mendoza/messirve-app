@@ -18,7 +18,7 @@ export default function EmailVerifiedScreen() {
           <Ionicons name="checkmark-circle" size={52} color="#4CAF50" />
         </View>
 
-        <Text className="font-bold text-[28px] text-[#1a1a1a] text-center mb-4">
+        <Text className="text-[24px] text-[#1a1a1a] text-center mb-4">
           ¡Correo verificado!
         </Text>
 

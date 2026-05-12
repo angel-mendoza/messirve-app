@@ -63,7 +63,7 @@ export default function RegisterScreen() {
             <MessirveLogo size="lg" />
           </View>
 
-          <Text className="font-bold text-[28px] text-[#1a1a1a] text-center mb-6">Crear cuenta</Text>
+          <Text className="text-[24px] text-[#1a1a1a] text-center mb-6">Crear cuenta</Text>
 
           {/* Full name */}
           <View className="mb-3">
@@ -150,9 +150,6 @@ export default function RegisterScreen() {
                 <Text className="font-bold text-sm text-celeste">Ingresar</Text>
               </Pressable>
             </Link>
-          </View>
-          <View className="flex-row justify-center">
-            <Text className="font-bold text-[28px] text-dorado text-center leading-[44px] mt-5 uppercase">Messirve te sirve!</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

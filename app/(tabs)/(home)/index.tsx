@@ -50,7 +50,7 @@ export default function HomeScreen() {
 
       {/* Title */}
       <View className="px-6 pt-2 pb-6">
-        <Text className="text-[26px] text-[#1a1a1a] text-center">
+        <Text className="text-[24px] text-[#1a1a1a] text-center">
           Servicios y emprendimientos de compatriotas en{' '}
           <Text className="text-celeste">Barcelona</Text>
         </Text>
@@ -84,12 +84,6 @@ export default function HomeScreen() {
           </Pressable>
         )}
       />
-
-      <View className="flex-row justify-center">
-        <Text className="font-bold text-[24px] text-dorado text-center mb-6 uppercase">
-          Messirve te sirve!
-        </Text>
-      </View>
     </SafeAreaView>
   )
 }

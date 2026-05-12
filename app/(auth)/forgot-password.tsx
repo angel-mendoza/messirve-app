@@ -49,7 +49,7 @@ export default function ForgotPasswordScreen() {
           {sent ? (
             <View className="flex-1 items-center justify-center px-4">
               <Ionicons name="mail-outline" size={64} color={Brand.celeste} style={{ marginBottom: 20 }} />
-              <Text className="font-bold text-[22px] text-[#1a1a1a] text-center mb-3">
+              <Text className="text-[22px] text-[#1a1a1a] text-center mb-3">
                 ¡Revisá tu correo!
               </Text>
               <Text className="font-sans text-sm text-[#666] text-center leading-6">
@@ -70,7 +70,7 @@ export default function ForgotPasswordScreen() {
           ) : (
             <>
               <View className="mb-10">
-                <Text className="font-bold text-[28px] text-[#1a1a1a] text-center leading-[38px]">
+                <Text className="text-[24px] text-[#1a1a1a] text-center leading-[38px]">
                   Recuperar contraseña
                 </Text>
                 <Text className="font-sans text-sm text-[#666] text-center mt-2 leading-5">
