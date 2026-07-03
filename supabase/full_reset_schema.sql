@@ -38,6 +38,7 @@ ON CONFLICT (slug) DO NOTHING;
 CREATE TABLE IF NOT EXISTS public.services (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   category_id uuid NOT NULL REFERENCES public.categories(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
   name text NOT NULL,
   description text,
   address text,
@@ -53,17 +54,22 @@ CREATE TABLE IF NOT EXISTS public.services (
 );
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Authenticated read active services" ON public.services FOR SELECT TO authenticated USING (is_active = true);
+CREATE POLICY "Users read own services" ON public.services FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
 CREATE TABLE IF NOT EXISTS public.profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name text,
   avatar_url text,
+  role text NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'client', 'user')),
   created_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users read own profile"   ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
 CREATE POLICY "Users update own profile" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
 CREATE POLICY "Users insert own profile" ON public.profiles FOR INSERT TO authenticated WITH CHECK (auth.uid() = id);
+
+-- References public.profiles, so it must be created after that table exists
+CREATE POLICY "Clients insert own pending services" ON public.services FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id AND is_active = false AND EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'client'));
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = ''
