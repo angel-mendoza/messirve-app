@@ -62,3 +62,16 @@ export type Profile = {
   avatar_url: string | null
   created_at: string
 }
+
+export type ClientRequestStatus = 'pending' | 'approved' | 'rejected'
+
+export type ClientRequest = {
+  id: string
+  user_id: string
+  status: ClientRequestStatus
+  message: string | null
+  reviewed_by: string | null
+  reviewed_at: string | null
+  created_at: string
+  updated_at: string
+}
