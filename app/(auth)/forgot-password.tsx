@@ -1,10 +1,11 @@
+import { AuthButton } from '@/components/auth-button'
+import { AuthInput } from '@/components/auth-input'
 import { MessirveLogo } from '@/components/logoAlt'
-import { Brand } from '@/constants/theme'
 import { supabase } from '@/lib/supabase'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ForgotPasswordScreen() {
@@ -30,89 +31,87 @@ export default function ForgotPasswordScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-cream">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         <ScrollView
-          contentContainerStyle={{  paddingHorizontal: 28, paddingTop: 32, paddingBottom: 24 }}
+          contentContainerStyle={{ paddingHorizontal: 28, paddingTop: 24, paddingBottom: 24 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Back */}
-          <Pressable onPress={() => router.back()} hitSlop={8} className="self-start mb-6">
-            <Ionicons name="arrow-back" size={24} color={Brand.celeste} />
+          <Pressable onPress={() => router.back()} hitSlop={8} className="flex-row items-center self-start mb-6">
+            <Ionicons name="chevron-back" size={18} color="#8A8478" />
+            <Text className="font-instrumentSansSemibold text-[13.5px] ml-1" style={{ color: '#8A8478' }}>
+              Volver a ingresar
+            </Text>
           </Pressable>
+
           {/* Logo */}
-          <View className="items-center mb-16">
-            <MessirveLogo size="lg" />
+          <View className="items-center mb-10">
+            <MessirveLogo size="md" />
           </View>
 
           {sent ? (
-            <View className="flex-1 items-center justify-center px-4">
-              <Ionicons name="mail-outline" size={64} color={Brand.celeste} style={{ marginBottom: 20 }} />
-              <Text className="text-[22px] text-[#1a1a1a] text-center mb-3">
+            <View className="flex-1 items-center justify-center px-2">
+              <Ionicons name="mail-outline" size={64} color="#72A2E0" style={{ marginBottom: 20 }} />
+              <Text className="font-anton text-[22px] uppercase text-center mb-3" style={{ color: '#2C4A73' }}>
                 ¡Revisá tu correo!
               </Text>
-              <Text className="font-sans text-sm text-[#666] text-center leading-6">
+              <Text className="font-instrumentSans text-sm text-center" style={{ color: '#8A8478', lineHeight: 22 }}>
                 Te enviamos un enlace para restablecer tu contraseña a{' '}
-                <Text className="font-bold text-celeste">{email}</Text>.
-              </Text>
-              <Pressable
-                onPress={() => router.back()}
-                disabled={loading}
-                className="rounded-full items-center justify-center mb-6 bg-dorado h-14 w-full mt-6"
-                style={{ opacity: loading ? 0.7 : 1 }}
-              >
-                <Text className="font-bold text-lg text-white">
-                  Volver al inicio de sesión
+                <Text className="font-instrumentSansSemibold" style={{ color: '#2C4A73' }}>
+                  {email}
                 </Text>
-              </Pressable>
+                .
+              </Text>
+              <View className="w-full mt-6">
+                <AuthButton onPress={() => router.back()}>Volver al inicio de sesión</AuthButton>
+              </View>
             </View>
           ) : (
             <>
-              <View className="mb-10">
-                <Text className="text-[24px] text-[#1a1a1a] text-center leading-[38px]">
-                  Recuperar contraseña
-                </Text>
-                <Text className="font-sans text-sm text-[#666] text-center mt-2 leading-5">
-                  Ingresá tu email y te enviamos un enlace para restablecer tu contraseña.
-                </Text>
-              </View>
+              <Text className="font-anton text-[25px] uppercase mb-2" style={{ color: '#2C4A73', lineHeight: 27 }}>
+                ¿Olvidaste tu contraseña?
+              </Text>
+              <Text className="font-instrumentSans text-sm mb-6" style={{ color: '#8A8478', lineHeight: 21 }}>
+                Ingresá tu email y te mandamos un enlace para crear una nueva.
+              </Text>
 
-              <View className="mb-8">
-                <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Email</Text>
-                <View
-                  className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
-                  style={{ borderColor: Brand.celeste + '66' }}
-                >
-                  <Ionicons name="mail" size={20} color={Brand.celeste} style={{ marginRight: 10 }} />
-                  <TextInput
-                    value={email}
-                    onChangeText={setEmail}
-                    placeholder="tu@email.com"
-                    placeholderTextColor="#aaa"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
-                  />
-                </View>
-              </View>
+              <AuthInput
+                label="Email"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="vos@email.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
 
-              <Pressable
-                onPress={handleSend}
-                disabled={loading}
-                className="rounded-full items-center justify-center bg-dorado h-14"
-                style={{ opacity: loading ? 0.7 : 1 }}
-              >
-                <Text className="font-bold text-lg text-white">
+              <View className="mt-3 mb-4">
+                <AuthButton onPress={handleSend} disabled={loading}>
                   {loading ? 'Enviando...' : 'Enviar enlace'}
-                </Text>
-              </Pressable>
+                </AuthButton>
+              </View>
 
-              <View className="flex-row justify-center mt-6">
-                <Text className="font-sans text-sm text-[#666]">¿Recordaste tu contraseña?{' '}</Text>
+              {/* Spam note */}
+              <View
+                className="flex-row items-start gap-3 rounded-2xl bg-white p-4 mb-6"
+                style={{ borderWidth: 1.5, borderColor: '#BFD4F0' }}
+              >
+                <Ionicons name="mail-outline" size={20} color="#72A2E0" />
+                <Text className="flex-1 font-instrumentSans text-[13px]" style={{ color: '#5A574F' }}>
+                  Revisá también la carpeta de spam.
+                </Text>
+              </View>
+
+              <View className="flex-row justify-center">
+                <Text className="font-instrumentSans text-sm" style={{ color: '#8A8478' }}>
+                  ¿Recordaste tu contraseña?{' '}
+                </Text>
                 <Pressable onPress={() => router.back()} hitSlop={8}>
-                  <Text className="font-bold text-sm text-celeste">Volver al login</Text>
+                  <Text className="font-instrumentSansSemibold text-sm" style={{ color: '#4E7FBF' }}>
+                    Volver al login
+                  </Text>
                 </Pressable>
               </View>
             </>

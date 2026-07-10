@@ -1,26 +1,16 @@
+import { AuthButton } from '@/components/auth-button'
+import { AuthInput } from '@/components/auth-input'
 import { MessirveLogo } from '@/components/logoAlt'
-import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
-import { Ionicons } from '@expo/vector-icons'
 import { Link, router } from 'expo-router'
 import { useState } from 'react'
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View
-} from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function LoginScreen() {
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleLogin = async () => {
@@ -37,111 +27,69 @@ export default function LoginScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white ">
+    <SafeAreaView className="flex-1 bg-cream">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingHorizontal: 28, paddingVertical: 24 }}
+          contentContainerStyle={{ paddingHorizontal: 28, paddingTop: 24, paddingBottom: 24 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {/* Logo */}
           <View className="items-center mb-8">
-            <MessirveLogo size="lg" />
+            <MessirveLogo size="md" />
           </View>
 
-        <Text  className="text-[24px] text-[#1a1a1a] text-center mb-6 leading-[38px]">
-          Bienvenidos a todos los{' '}
-          <Text className="text-celeste">Argentinos y Uruguayos</Text>{' '}
-          por el mundo!
-        </Text>
+          <Text className="font-anton text-[28px] uppercase mb-2" style={{ color: '#2C4A73', lineHeight: 30 }}>
+            Bienvenido de vuelta
+          </Text>
+          <Text className="font-instrumentSans text-[14.5px] mb-6" style={{ color: '#8A8478' }}>
+            Ingresá para seguir descubriendo lo nuestro.
+          </Text>
 
-          {/* Email field */}
-          <View className="mb-3">
-            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Email</Text>
-            <View
-              className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
-              style={{ borderColor: Brand.celeste + '66' }}
-            >
-              <Ionicons name="mail" size={20} color={Brand.celeste} style={{ marginRight: 10 }} />
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="tu@email.com"
-                placeholderTextColor="#aaa"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
-              />
-            </View>
-          </View>
+          <AuthInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="vos@email.com"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            textContentType="none"
+            importantForAutofill="no"
+          />
 
-          {/* Password field */}
-          <View className="mb-3">
-            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Contraseña</Text>
-            <View
-              className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
-              style={{ borderColor: Brand.celeste + '66' }}
-            >
-              <Ionicons name="lock-closed" size={20} color={Brand.celeste} style={{ marginRight: 10 }} />
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="••••••••"
-                placeholderTextColor="#aaa"
-                secureTextEntry={!showPassword}
-                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
-              />
-              <Pressable onPress={() => setShowPassword(!showPassword)} hitSlop={8}>
-                <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color={Brand.gris} />
+          <AuthInput
+            label="Contraseña"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="••••••••"
+            isPassword
+            rightLabel={
+              <Pressable onPress={() => router.push('/(auth)/forgot-password' as any)} hitSlop={8}>
+                <Text className="font-instrumentSansSemibold text-[12.5px]" style={{ color: '#4E7FBF' }}>
+                  ¿La olvidaste?
+                </Text>
               </Pressable>
-            </View>
-          </View>
+            }
+          />
 
-          {/* Recover password */}
-          <View className="flex-row justify-end mb-8">
-            <Pressable onPress={() => router.push('/(auth)/forgot-password' as any)} hitSlop={8}>
-              <Text className="font-sans text-sm text-celeste">Recuperar contraseña</Text>
-            </Pressable>
-          </View>
-
-          {/* Login button */}
-          <Pressable
-            onPress={handleLogin}
-            disabled={loading}
-            className="rounded-full items-center justify-center mb-6 bg-dorado h-14"
-            style={{ opacity: loading ? 0.7 : 1 }}
-          >
-            <Text className="font-bold text-lg text-white">
+          <View className="mt-5 mb-6">
+            <AuthButton onPress={handleLogin} disabled={loading}>
               {loading ? 'Ingresando...' : 'Ingresar'}
-            </Text>
-          </Pressable>
-
-          {/* Divider */}
-          <View className="flex-row items-center mb-6">
-            <View className="flex-1 h-px" style={{ backgroundColor: Brand.celeste + '66' }} />
-            {/* <Text className="mx-3 text-celeste text-lg">@</Text> */}
-            <View className="flex-1 h-px" style={{ backgroundColor: Brand.celeste + '66' }} />
+            </AuthButton>
           </View>
-
-          {/* Social buttons (UI only) */}
-          {/* <View className="flex-row justify-center gap-4 mb-8">
-            {['logo-google', 'logo-facebook', 'logo-apple'].map((icon) => (
-              <View key={icon} className="rounded-full items-center justify-center w-[52px] h-[52px] bg-[#f0f0f0]">
-                <Ionicons name={icon as any} size={24} color="#555" />
-              </View>
-            ))}
-          </View> */}
 
           {/* Register link */}
           <View className="flex-row justify-center">
-            <Text className="font-sans text-sm text-[#666]">¿No tienes cuenta?{' '}</Text>
+            <Text className="font-instrumentSans text-sm" style={{ color: '#8A8478' }}>
+              ¿No tenés cuenta?{' '}
+            </Text>
             <Link href={'/(auth)/register' as any} asChild>
               <Pressable>
-                <Text className="font-bold text-sm text-celeste">Crear cuenta</Text>
+                <Text className="font-instrumentSansSemibold text-sm" style={{ color: '#4E7FBF' }}>
+                  Registrate
+                </Text>
               </Pressable>
             </Link>
           </View>

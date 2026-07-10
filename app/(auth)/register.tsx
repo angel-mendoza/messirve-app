@@ -1,19 +1,12 @@
+import { AuthButton } from '@/components/auth-button'
+import { AuthInput } from '@/components/auth-input'
 import { MessirveLogo } from '@/components/logoAlt'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
 import { Ionicons } from '@expo/vector-icons'
 import { Link, router } from 'expo-router'
 import { useState } from 'react'
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View
-} from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function RegisterScreen() {
@@ -21,7 +14,7 @@ export default function RegisterScreen() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleRegister = async () => {
@@ -29,8 +22,12 @@ export default function RegisterScreen() {
       Alert.alert('Error', 'Por favor completá todos los campos')
       return
     }
-    if (password.length < 6) {
-      Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres')
+    if (password.length < 8) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 8 caracteres')
+      return
+    }
+    if (!termsAccepted) {
+      Alert.alert('Error', 'Tenés que aceptar los términos y la política de privacidad')
       return
     }
     setLoading(true)
@@ -46,108 +43,97 @@ export default function RegisterScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-cream">
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 28, paddingTop: 24, paddingBottom: 24 }}
+          contentContainerStyle={{ paddingHorizontal: 28, paddingTop: 24, paddingBottom: 24 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Back button */}
-          <Pressable onPress={() => router.back()} className="mb-4" hitSlop={8}>
-            <Ionicons name="arrow-back" size={24} color={Brand.celeste} />
-          </Pressable>
-
           {/* Logo */}
           <View className="items-center mb-6">
-            <MessirveLogo size="lg" />
+            <MessirveLogo size="md" />
           </View>
 
-          <Text className="text-[24px] text-[#1a1a1a] text-center mb-6">Crear cuenta</Text>
+          <Text className="font-anton text-[28px] uppercase mb-2" style={{ color: '#2C4A73', lineHeight: 30 }}>
+            Creá tu cuenta
+          </Text>
+          <Text className="font-instrumentSans text-[14.5px] mb-6" style={{ color: '#8A8478' }}>
+            Sumate a la comunidad. Lleva un minuto.
+          </Text>
 
-          {/* Full name */}
-          <View className="mb-3">
-            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Nombre completo</Text>
+          <AuthInput
+            label="Nombre completo"
+            value={fullName}
+            onChangeText={setFullName}
+            placeholder="Valentina Gómez"
+            autoCapitalize="words"
+          />
+
+          <AuthInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="vos@email.com"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            textContentType="none"
+            importantForAutofill="no"
+          />
+
+          <AuthInput
+            label="Contraseña"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Mínimo 8 caracteres"
+            isPassword
+          />
+
+          {/* Terms checkbox */}
+          <Pressable onPress={() => setTermsAccepted((v) => !v)} className="flex-row items-start gap-2.5 mt-2 mb-6">
             <View
-              className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
-              style={{ borderColor: Brand.celeste + '66' }}
+              className="items-center justify-center rounded-md mt-0.5"
+              style={{
+                width: 20,
+                height: 20,
+                borderWidth: 2,
+                borderColor: termsAccepted ? Brand.celeste : '#A9A297',
+                backgroundColor: termsAccepted ? Brand.celeste : '#fff'
+              }}
             >
-              <Ionicons name="person-outline" size={20} color={Brand.celeste} style={{ marginRight: 10 }} />
-              <TextInput
-                value={fullName}
-                onChangeText={setFullName}
-                placeholder="Tu nombre"
-                placeholderTextColor="#aaa"
-                autoCapitalize="words"
-                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
-              />
+              {termsAccepted && <Ionicons name="checkmark" size={14} color="#fff" />}
             </View>
-          </View>
-
-          {/* Email */}
-          <View className="mb-3">
-            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Email</Text>
-            <View
-              className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
-              style={{ borderColor: Brand.celeste + '66' }}
-            >
-              <Ionicons name="mail" size={20} color={Brand.celeste} style={{ marginRight: 10 }} />
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="tu@email.com"
-                placeholderTextColor="#aaa"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoComplete="off"
-                textContentType="none"
-                importantForAutofill="no"
-                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
-              />
-            </View>
-          </View>
-
-          {/* Password */}
-          <View className="mb-6">
-            <Text className="font-sans text-[14px] leading-none text-[#444] mb-1.5">Contraseña</Text>
-            <View
-              className="flex-row items-center rounded-2xl px-4 h-14 bg-[#EEF6FD] border"
-              style={{ borderColor: Brand.celeste + '66' }}
-            >
-              <Ionicons name="lock-closed" size={20} color={Brand.celeste} style={{ marginRight: 10 }} />
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Mínimo 6 caracteres"
-                placeholderTextColor="#aaa"
-                secureTextEntry={!showPassword}
-                style={{ flex: 1, fontFamily: 'OpenSans_400Regular', fontSize: 15, lineHeight: 22, color: '#1a1a1a' }}
-              />
-              <Pressable onPress={() => setShowPassword(!showPassword)} hitSlop={8}>
-                <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={20} color={Brand.gris} />
-              </Pressable>
-            </View>
-          </View>
-
-          {/* Register button */}
-          <Pressable
-            onPress={handleRegister}
-            disabled={loading}
-            className="rounded-full items-center justify-center mb-6 bg-dorado h-14"
-            style={{ opacity: loading ? 0.7 : 1 }}
-          >
-            <Text className="font-bold text-lg text-white">
-              {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+            <Text className="flex-1 font-instrumentSans text-[13px]" style={{ color: '#5A574F', lineHeight: 19 }}>
+              Acepto los{' '}
+              <Text className="font-instrumentSansSemibold" style={{ color: '#4E7FBF' }}>
+                términos
+              </Text>{' '}
+              y la{' '}
+              <Text className="font-instrumentSansSemibold" style={{ color: '#4E7FBF' }}>
+                política de privacidad
+              </Text>
+              .
             </Text>
           </Pressable>
 
+          <View className="mb-6">
+            <AuthButton onPress={handleRegister} disabled={loading || !termsAccepted}>
+              {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+            </AuthButton>
+          </View>
+
           {/* Login link */}
           <View className="flex-row justify-center">
-            <Text className="font-sans text-sm text-[#666]">¿Ya tenés cuenta?{' '}</Text>
+            <Text className="font-instrumentSans text-sm" style={{ color: '#8A8478' }}>
+              ¿Ya tenés cuenta?{' '}
+            </Text>
             <Link href={'/(auth)/login' as any} asChild>
               <Pressable>
-                <Text className="font-bold text-sm text-celeste">Ingresar</Text>
+                <Text className="font-instrumentSansSemibold text-sm" style={{ color: '#4E7FBF' }}>
+                  Ingresá
+                </Text>
               </Pressable>
             </Link>
           </View>
