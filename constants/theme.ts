@@ -1,9 +1,11 @@
 import { Platform } from 'react-native'
 
 export const Brand = {
-  celeste: '#72B8E6',
-  dorado: '#C9A96D',
-  gris: '#C5C2BE'
+  celeste: '#72A2E0',
+  dorado: '#CFB176',
+  celesteDeep: '#1B2A3D',
+  cream: '#FAF7F0',
+  gris: '#E4DFD3'
 } as const
 
 export const Colors = {

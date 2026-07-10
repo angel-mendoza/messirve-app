@@ -1,5 +1,11 @@
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/lib/auth-context';
+import { Anton_400Regular } from '@expo-google-fonts/anton/400Regular';
+import {
+  InstrumentSans_400Regular,
+  InstrumentSans_500Medium,
+  InstrumentSans_600SemiBold
+} from '@expo-google-fonts/instrument-sans';
 import { MadimiOne_400Regular } from '@expo-google-fonts/madimi-one/400Regular';
 import {
   OpenSans_300Light,
@@ -20,7 +26,16 @@ SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
   const colorScheme = useColorScheme()
-  const [fontsLoaded] = useFonts({ OpenSans_300Light, OpenSans_400Regular, OpenSans_700Bold, MadimiOne_400Regular })
+  const [fontsLoaded] = useFonts({
+    OpenSans_300Light,
+    OpenSans_400Regular,
+    OpenSans_700Bold,
+    MadimiOne_400Regular,
+    Anton_400Regular,
+    InstrumentSans_400Regular,
+    InstrumentSans_500Medium,
+    InstrumentSans_600SemiBold
+  })
 
   useEffect(() => {
     if (fontsLoaded) SplashScreen.hideAsync()

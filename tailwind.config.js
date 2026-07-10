@@ -5,14 +5,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        celeste: '#72B8E6',
-        dorado: '#C9A96D',
-        gris: '#C5C2BE'
+        celeste: '#72A2E0',
+        dorado: '#CFB176',
+        celesteDeep: '#1B2A3D',
+        cream: '#FAF7F0',
+        gris: '#E4DFD3'
       },
       fontFamily: {
         sans: ['OpenSans_400Regular'],
         light: ['OpenSans_300Light'],
-        bold: ['OpenSans_700Bold']
+        bold: ['OpenSans_700Bold'],
+        anton: ['Anton_400Regular'],
+        instrumentSans: ['InstrumentSans_400Regular'],
+        instrumentSansMedium: ['InstrumentSans_500Medium'],
+        instrumentSansSemibold: ['InstrumentSans_600SemiBold']
       },
       fontSize: {
         titulo: [42, { lineHeight: 52 }],
