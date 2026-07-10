@@ -42,6 +42,7 @@ export default function ServiceDetailScreen() {
   const [loading, setLoading] = useState(true)
   const [submittingComment, setSubmittingComment] = useState(false)
   const [photoIndex, setPhotoIndex] = useState(0)
+  const [imageContainerWidth, setImageContainerWidth] = useState(width)
   const scrollViewRef = useRef<ScrollView>(null)
 
   useEffect(() => {
@@ -199,6 +200,7 @@ export default function ServiceDetailScreen() {
   }
 
   const photos = service.photos ?? []
+  const imageHeight = Math.min(imageContainerWidth * 0.75, 250)
 
   return (
     <View className="flex-1 bg-white">
@@ -209,100 +211,118 @@ export default function ServiceDetailScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Photo gallery */}
-          <View className="h-[280px] mt-4" style={{ backgroundColor: Brand.celeste + '33' }}>
-            {photos.length > 0 ? (
-              <>
-                <FlatList
-                  data={photos}
-                  keyExtractor={(_, i) => String(i)}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  onMomentumScrollEnd={(e) => {
-                    setPhotoIndex(Math.round(e.nativeEvent.contentOffset.x / width))
-                  }}
-                  renderItem={({ item }) => (
-                    <Image source={{ uri: item }} style={{ width, height: 280 }} contentFit="cover" />
-                  )}
-                />
-                {photos.length > 1 && (
-                  <View className="absolute bottom-3 left-0 right-0 flex-row justify-center gap-1">
-                    {photos.map((_, i) => (
-                      <View
-                        key={i}
-                        className="rounded-full"
-                        style={{
-                          width: i === photoIndex ? 20 : 6,
-                          height: 6,
-                          backgroundColor: i === photoIndex ? '#fff' : 'rgba(255,255,255,0.5)'
-                        }}
+          {/* Photo + info row */}
+          <View className="flex-col md:flex-row mt-4">
+            {/* Image column */}
+            <View
+              className="w-full md:w-1/3"
+              style={{ height: imageHeight, backgroundColor: Brand.celeste + '33' }}
+              onLayout={(e) => setImageContainerWidth(e.nativeEvent.layout.width)}
+            >
+              {photos.length > 0 ? (
+                <>
+                  <FlatList
+                    data={photos}
+                    keyExtractor={(_, i) => String(i)}
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    onMomentumScrollEnd={(e) => {
+                      setPhotoIndex(Math.round(e.nativeEvent.contentOffset.x / imageContainerWidth))
+                    }}
+                    renderItem={({ item }) => (
+                      <Image
+                        source={{ uri: item }}
+                        style={{ width: imageContainerWidth, height: imageHeight }}
+                        contentFit="cover"
                       />
-                    ))}
+                    )}
+                  />
+                  {photos.length > 1 && (
+                    <View className="absolute bottom-3 left-0 right-0 flex-row justify-center gap-1">
+                      {photos.map((_, i) => (
+                        <View
+                          key={i}
+                          className="rounded-full"
+                          style={{
+                            width: i === photoIndex ? 20 : 6,
+                            height: 6,
+                            backgroundColor: i === photoIndex ? '#fff' : 'rgba(255,255,255,0.5)'
+                          }}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </>
+              ) : (
+                <View className="flex-1 items-center justify-center">
+                  <Ionicons name="storefront-outline" size={64} color={Brand.celeste} />
+                </View>
+              )}
+
+              {/* Back button overlay */}
+              <Pressable
+                onPress={() => router.back()}
+                className="absolute top-4 left-4 rounded-full p-2 bg-black/35"
+                hitSlop={8}
+              >
+                <Ionicons name="arrow-back" size={22} color="#fff" />
+              </Pressable>
+
+              {/* Like button overlay */}
+              <Pressable
+                onPress={handleLike}
+                className="absolute top-4 right-4 rounded-full p-2 bg-black/35"
+                hitSlop={8}
+              >
+                <Ionicons
+                  name={userLiked ? 'heart' : 'heart-outline'}
+                  size={22}
+                  color={userLiked ? '#ff6b6b' : '#fff'}
+                />
+              </Pressable>
+            </View>
+
+            {/* Info column */}
+            <View className="w-full md:w-2/3 px-5 pt-4 md:pt-0">
+              {/* Category badge */}
+              {service.categories && (
+                <View className="flex-row mb-2">
+                  <View
+                    className="flex-row items-center gap-1 rounded-full px-3 py-1"
+                    style={{ backgroundColor: Brand.celeste + '22' }}
+                  >
+                    <Text className="text-xs">{(service.categories as any).emoji ?? '🏷️'}</Text>
+                    <Text className="font-bold text-[11px] text-celeste">
+                      {(service.categories as any).name}
+                    </Text>
                   </View>
-                )}
-              </>
-            ) : (
-              <View className="flex-1 items-center justify-center">
-                <Ionicons name="storefront-outline" size={64} color={Brand.celeste} />
+                </View>
+              )}
+
+              {/* Name + Likes */}
+              <View className="flex-row items-start justify-between mb-1">
+                <Text className="font-bold text-2xl text-[#1a1a1a] flex-1 leading-[30px]">
+                  {service.name}
+                </Text>
+                <View className="flex-row items-center gap-1 ml-3 mt-1">
+                  <Ionicons name="heart" size={16} color="#e53e3e" />
+                  <Text className="font-sans text-[13px] text-[#888]">{totalLikes}</Text>
+                </View>
               </View>
-            )}
 
-            {/* Back button overlay */}
-            <Pressable
-              onPress={() => router.back()}
-              className="absolute top-4 left-4 rounded-full p-2 bg-black/35"
-              hitSlop={8}
-            >
-              <Ionicons name="arrow-back" size={22} color="#fff" />
-            </Pressable>
-
-            {/* Like button overlay */}
-            <Pressable
-              onPress={handleLike}
-              className="absolute top-4 right-4 rounded-full p-2 bg-black/35"
-              hitSlop={8}
-            >
-              <Ionicons name={userLiked ? 'heart' : 'heart-outline'} size={22} color={userLiked ? '#ff6b6b' : '#fff'} />
-            </Pressable>
+              {/* Rating display */}
+              <View className="flex-row items-center gap-2 flex-wrap">
+                <StarRating value={avgRating} size={18} readonly />
+                <Text className="font-sans text-[13px] text-[#888]">
+                  {totalRatings > 0 ? `${avgRating.toFixed(1)} (${totalRatings} calificaciones)` : 'Sin calificaciones'}
+                </Text>
+              </View>
+            </View>
           </View>
 
           {/* Main content */}
           <View className="px-5 pt-5">
-            {/* Category badge */}
-            {service.categories && (
-              <View className="flex-row mb-2">
-                <View
-                  className="flex-row items-center gap-1 rounded-full px-3 py-1"
-                  style={{ backgroundColor: Brand.celeste + '22' }}
-                >
-                  <Text className="text-xs">{(service.categories as any).emoji ?? '🏷️'}</Text>
-                  <Text className="font-bold text-[11px] text-celeste">
-                    {(service.categories as any).name}
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            {/* Name + Likes */}
-            <View className="flex-row items-start justify-between mb-1">
-              <Text className="font-bold text-2xl text-[#1a1a1a] flex-1 leading-[30px]">
-                {service.name}
-              </Text>
-              <View className="flex-row items-center gap-1 ml-3 mt-1">
-                <Ionicons name="heart" size={16} color="#e53e3e" />
-                <Text className="font-sans text-[13px] text-[#888]">{totalLikes}</Text>
-              </View>
-            </View>
-
-            {/* Rating display */}
-            <View className="flex-row items-center gap-2 mb-4">
-              <StarRating value={avgRating} size={18} readonly />
-              <Text className="font-sans text-[13px] text-[#888]">
-                {totalRatings > 0 ? `${avgRating.toFixed(1)} (${totalRatings} calificaciones)` : 'Sin calificaciones'}
-              </Text>
-            </View>
-
             {/* Info rows */}
             <View
               className="rounded-2xl p-4 mb-5 gap-3"
