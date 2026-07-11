@@ -65,7 +65,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />
         }}
       />
-      <Tabs.Screen name="services" options={{ href: null, headerShown: false }} />
       <Tabs.Screen name="ratings" options={{ href: null, headerShown: false }} />
     </Tabs>
   )
