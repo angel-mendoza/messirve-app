@@ -1,8 +1,9 @@
 import { StarRating } from '@/components/star-rating'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
+import { getCategoryColor } from '@/lib/category-colors'
 import { supabase } from '@/lib/supabase'
-import type { Profile, Service, ServiceComment } from '@/types/database'
+import type { Category, Profile, Service, ServiceComment } from '@/types/database'
 import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import { router, useLocalSearchParams } from 'expo-router'
@@ -32,6 +33,7 @@ export default function ServiceDetailScreen() {
   const { user } = useAuth()
 
   const [service, setService] = useState<Service | null>(null)
+  const [categories, setCategories] = useState<Category[]>([])
   const [avgRating, setAvgRating] = useState(0)
   const [totalRatings, setTotalRatings] = useState(0)
   const [totalLikes, setTotalLikes] = useState(0)
@@ -56,6 +58,7 @@ export default function ServiceDetailScreen() {
 
     const [
       { data: serviceData },
+      { data: categoriesData },
       { data: ratingsData },
       { data: likesData },
       { data: userLikeData },
@@ -63,6 +66,7 @@ export default function ServiceDetailScreen() {
       { data: commentsData }
     ] = await Promise.all([
       supabase.from('services').select('*, categories(name, slug, emoji)').eq('id', id).single(),
+      supabase.from('categories').select('*').order('order'),
       supabase.from('service_ratings').select('stars').eq('service_id', id),
       supabase.from('service_likes').select('id').eq('service_id', id),
       supabase.from('service_likes').select('id').eq('service_id', id).eq('user_id', user.id).maybeSingle(),
@@ -71,6 +75,7 @@ export default function ServiceDetailScreen() {
     ])
 
     if (serviceData) setService(serviceData)
+    if (categoriesData) setCategories(categoriesData)
 
     if (ratingsData && ratingsData.length > 0) {
       const avg = ratingsData.reduce((a, r) => a + r.stars, 0) / ratingsData.length
@@ -182,7 +187,7 @@ export default function ServiceDetailScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
+      <SafeAreaView className="flex-1 items-center justify-center bg-cream">
         <ActivityIndicator size="large" color={Brand.celeste} />
       </SafeAreaView>
     )
@@ -190,10 +195,14 @@ export default function ServiceDetailScreen() {
 
   if (!service) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
-        <Text className="font-sans text-[#888]">Servicio no encontrado</Text>
+      <SafeAreaView className="flex-1 items-center justify-center bg-cream">
+        <Text className="font-instrumentSans text-[14px]" style={{ color: '#8A8478' }}>
+          Servicio no encontrado
+        </Text>
         <Pressable onPress={() => router.back()} className="mt-4">
-          <Text className="text-celeste">Volver</Text>
+          <Text className="font-instrumentSansSemibold text-[14px]" style={{ color: '#4E7FBF' }}>
+            Volver
+          </Text>
         </Pressable>
       </SafeAreaView>
     )
@@ -201,10 +210,23 @@ export default function ServiceDetailScreen() {
 
   const photos = service.photos ?? []
   const imageHeight = Math.min(imageContainerWidth * 0.75, 250)
+  const categoryIndex = categories.findIndex((c) => c.slug === (service.categories as any)?.slug)
+  const categoryColor = getCategoryColor((service.categories as any)?.slug ?? '', categoryIndex >= 0 ? categoryIndex : 0)
 
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-cream" edges={['top']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+        {/* Header: back (fila normal, no overlay sobre el carrusel de fotos) */}
+        <View className="flex-row items-center px-4 pt-2">
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+            hitSlop={8}
+            className="rounded-full p-2"
+          >
+            <Ionicons name="arrow-back" size={22} color={Brand.celeste} />
+          </Pressable>
+        </View>
+
         <ScrollView
           ref={scrollViewRef}
           contentInsetAdjustmentBehavior="automatic"
@@ -212,7 +234,7 @@ export default function ServiceDetailScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Photo + info row */}
-          <View className="flex-col md:flex-row mt-4">
+          <View className="flex-col md:flex-row mt-2">
             {/* Image column */}
             <View
               className="w-full md:w-1/3"
@@ -259,28 +281,6 @@ export default function ServiceDetailScreen() {
                   <Ionicons name="storefront-outline" size={64} color={Brand.celeste} />
                 </View>
               )}
-
-              {/* Back button overlay */}
-              <Pressable
-                onPress={() => router.back()}
-                className="absolute top-4 left-4 rounded-full p-2 bg-black/35"
-                hitSlop={8}
-              >
-                <Ionicons name="arrow-back" size={22} color="#fff" />
-              </Pressable>
-
-              {/* Like button overlay */}
-              <Pressable
-                onPress={handleLike}
-                className="absolute top-4 right-4 rounded-full p-2 bg-black/35"
-                hitSlop={8}
-              >
-                <Ionicons
-                  name={userLiked ? 'heart' : 'heart-outline'}
-                  size={22}
-                  color={userLiked ? '#ff6b6b' : '#fff'}
-                />
-              </Pressable>
             </View>
 
             {/* Info column */}
@@ -290,10 +290,10 @@ export default function ServiceDetailScreen() {
                 <View className="flex-row mb-2">
                   <View
                     className="flex-row items-center gap-1 rounded-full px-3 py-1"
-                    style={{ backgroundColor: Brand.celeste + '22' }}
+                    style={{ backgroundColor: categoryColor.hex + '22' }}
                   >
                     <Text className="text-xs">{(service.categories as any).emoji ?? '🏷️'}</Text>
-                    <Text className="font-bold text-[11px] text-celeste">
+                    <Text className="font-anton text-[11px] uppercase" style={{ color: categoryColor.hex, letterSpacing: 0.3 }}>
                       {(service.categories as any).name}
                     </Text>
                   </View>
@@ -302,19 +302,24 @@ export default function ServiceDetailScreen() {
 
               {/* Name + Likes */}
               <View className="flex-row items-start justify-between mb-1">
-                <Text className="font-bold text-2xl text-[#1a1a1a] flex-1 leading-[30px]">
+                <Text
+                  className="font-instrumentSansSemibold text-2xl flex-1 leading-[30px]"
+                  style={{ color: '#1B2A3D' }}
+                >
                   {service.name}
                 </Text>
-                <View className="flex-row items-center gap-1 ml-3 mt-1">
-                  <Ionicons name="heart" size={16} color="#e53e3e" />
-                  <Text className="font-sans text-[13px] text-[#888]">{totalLikes}</Text>
-                </View>
+                <Pressable onPress={handleLike} hitSlop={8} className="flex-row items-center gap-1 ml-3 mt-1">
+                  <Ionicons name={userLiked ? 'heart' : 'heart-outline'} size={16} color={Brand.dorado} />
+                  <Text className="font-instrumentSans text-[13px]" style={{ color: '#8A8478' }}>
+                    {totalLikes}
+                  </Text>
+                </Pressable>
               </View>
 
               {/* Rating display */}
               <View className="flex-row items-center gap-2 flex-wrap">
                 <StarRating value={avgRating} size={18} readonly />
-                <Text className="font-sans text-[13px] text-[#888]">
+                <Text className="font-instrumentSans text-[13px]" style={{ color: '#8A8478' }}>
                   {totalRatings > 0 ? `${avgRating.toFixed(1)} (${totalRatings} calificaciones)` : 'Sin calificaciones'}
                 </Text>
               </View>
@@ -325,13 +330,13 @@ export default function ServiceDetailScreen() {
           <View className="px-5 pt-5">
             {/* Info rows */}
             <View
-              className="rounded-2xl p-4 mb-5 gap-3"
-              style={{ backgroundColor: '#F8F9FA', borderCurve: 'continuous' }}
+              className="rounded-2xl p-4 mb-5 gap-3 bg-white"
+              style={{ borderWidth: 1.5, borderColor: '#ECE6DA', borderCurve: 'continuous' }}
             >
               {service.address && (
                 <View className="flex-row items-start gap-3">
                   <Ionicons name="location" size={18} color={Brand.celeste} style={{ marginTop: 1 }} />
-                  <Text className="font-sans text-sm text-[#444] flex-1">
+                  <Text className="font-instrumentSans text-sm flex-1" style={{ color: '#5A574F' }}>
                     {service.address}, {service.city}
                   </Text>
                 </View>
@@ -339,7 +344,9 @@ export default function ServiceDetailScreen() {
               {service.price_info && (
                 <View className="flex-row items-center gap-3">
                   <Ionicons name="pricetag" size={18} color={Brand.celeste} />
-                  <Text className="font-sans text-sm text-[#444]">{service.price_info}</Text>
+                  <Text className="font-instrumentSans text-sm" style={{ color: '#5A574F' }}>
+                    {service.price_info}
+                  </Text>
                 </View>
               )}
               {service.phone && (
@@ -348,7 +355,9 @@ export default function ServiceDetailScreen() {
                   onPress={() => Linking.openURL(`tel:${service.phone}`)}
                 >
                   <Ionicons name="logo-whatsapp" size={18} color={Brand.celeste} />
-                  <Text className="font-sans text-sm text-celeste">{service.phone}</Text>
+                  <Text className="font-instrumentSans text-sm" style={{ color: '#4E7FBF' }}>
+                    {service.phone}
+                  </Text>
                 </Pressable>
               )}
               {service.instagram && (
@@ -357,7 +366,9 @@ export default function ServiceDetailScreen() {
                   onPress={() => Linking.openURL(`https://instagram.com/${service.instagram!.replace('@', '')}`)}
                 >
                   <Ionicons name="logo-instagram" size={18} color={Brand.celeste} />
-                  <Text className="font-sans text-sm text-celeste">{service.instagram}</Text>
+                  <Text className="font-instrumentSans text-sm" style={{ color: '#4E7FBF' }}>
+                    {service.instagram}
+                  </Text>
                 </Pressable>
               )}
               {service.website && (
@@ -366,7 +377,7 @@ export default function ServiceDetailScreen() {
                   onPress={() => Linking.openURL(service.website!)}
                 >
                   <Ionicons name="globe" size={18} color={Brand.celeste} />
-                  <Text className="font-sans text-sm text-celeste" numberOfLines={1}>
+                  <Text className="font-instrumentSans text-sm" style={{ color: '#4E7FBF' }} numberOfLines={1}>
                     {service.website}
                   </Text>
                 </Pressable>
@@ -376,8 +387,10 @@ export default function ServiceDetailScreen() {
             {/* Description */}
             {service.description && (
               <View className="mb-6">
-                <Text className="font-bold text-base text-[#1a1a1a] mb-2">Acerca de</Text>
-                <Text className="font-light text-body text-[#555] leading-[22px]">
+                <Text className="font-anton text-[16px] uppercase mb-2" style={{ color: '#2C4A73' }}>
+                  Acerca de
+                </Text>
+                <Text className="font-instrumentSans text-body leading-[22px]" style={{ color: '#5A574F' }}>
                   {service.description}
                 </Text>
               </View>
@@ -392,12 +405,12 @@ export default function ServiceDetailScreen() {
                 borderCurve: 'continuous'
               }}
             >
-              <Text className="font-bold text-[15px] text-[#1a1a1a] mb-[10px]">
+              <Text className="font-instrumentSansSemibold text-[15px] mb-[10px]" style={{ color: '#1B2A3D' }}>
                 {userRating > 0 ? 'Tu calificación' : '¿Cómo calificás este servicio?'}
               </Text>
               <StarRating value={userRating} onChange={handleRate} size={32} />
               {userRating > 0 && (
-                <Text className="font-light text-[13px] text-[#888] mt-2">
+                <Text className="font-instrumentSans text-[13px] mt-2" style={{ color: '#8A8478' }}>
                   Tocá las estrellas para cambiar tu calificación
                 </Text>
               )}
@@ -405,29 +418,30 @@ export default function ServiceDetailScreen() {
 
             {/* Comments section */}
             <View className="mb-4">
-              <Text className="font-bold text-base text-[#1a1a1a] mb-3">
-                Comentarios ({comments.length})
+              <Text className="font-anton text-[16px] uppercase mb-3" style={{ color: '#2C4A73' }}>
+                {`Comentarios (${comments.length})`}
               </Text>
 
               {/* Add comment input */}
               <View
-                className="rounded-2xl flex-row items-end gap-2 p-3 mb-5 border"
-                style={{ backgroundColor: '#F8F9FA', borderColor: '#EBEBEB', borderCurve: 'continuous' }}
+                className="rounded-2xl flex-row items-end gap-2 p-3 mb-5 bg-white"
+                style={{ borderWidth: 1.5, borderColor: '#ECE6DA', borderCurve: 'continuous' }}
               >
                 <TextInput
                   value={newComment}
                   onChangeText={setNewComment}
                   placeholder="Escribí un comentario..."
-                  placeholderTextColor="#aaa"
+                  placeholderTextColor="#A9A297"
                   multiline
                   maxLength={500}
-                  className="flex-1 font-sans text-sm text-[#1a1a1a] max-h-[100px] pt-0"
+                  className="flex-1 font-instrumentSans text-sm max-h-[100px] pt-0"
+                  style={{ color: '#1B2A3D' }}
                 />
                 <Pressable
                   onPress={handleSubmitComment}
                   disabled={!newComment.trim() || submittingComment}
                   className="rounded-full p-2"
-                  style={{ backgroundColor: newComment.trim() ? Brand.celeste : Brand.gris + '44' }}
+                  style={{ backgroundColor: newComment.trim() ? Brand.dorado : Brand.gris + '44' }}
                 >
                   {submittingComment ? (
                     <ActivityIndicator size="small" color="#fff" />
@@ -440,7 +454,9 @@ export default function ServiceDetailScreen() {
               {/* Comment list */}
               {comments.length === 0 ? (
                 <View className="items-center py-6">
-                  <Text className="font-light text-sm text-[#aaa]">Sé el primero en comentar</Text>
+                  <Text className="font-instrumentSans text-sm" style={{ color: '#A9A297' }}>
+                    Sé el primero en comentar
+                  </Text>
                 </View>
               ) : (
                 <View className="gap-3">
@@ -462,17 +478,21 @@ export default function ServiceDetailScreen() {
                               contentFit="cover"
                             />
                           ) : (
-                            <Text className="font-bold text-sm text-celeste">{initial}</Text>
+                            <Text className="font-instrumentSansSemibold text-sm" style={{ color: '#1B2A3D' }}>
+                              {initial}
+                            </Text>
                           )}
                         </View>
                         <View
-                          className="flex-1 rounded-2xl rounded-tl-sm p-3"
-                          style={{ backgroundColor: '#F8F9FA', borderCurve: 'continuous' }}
+                          className="flex-1 rounded-2xl rounded-tl-sm p-3 bg-white"
+                          style={{ borderWidth: 1.5, borderColor: '#ECE6DA', borderCurve: 'continuous' }}
                         >
                           <View className="flex-row items-center justify-between mb-1">
-                            <Text className="font-bold text-[13px] text-[#333]">{name}</Text>
+                            <Text className="font-instrumentSansSemibold text-[13px]" style={{ color: '#1B2A3D' }}>
+                              {name}
+                            </Text>
                             <View className="flex-row items-center gap-2">
-                              <Text className="font-light text-[11px] text-[#aaa]">
+                              <Text className="font-instrumentSans text-[11px]" style={{ color: '#A9A297' }}>
                                 {formatDate(comment.created_at)}
                               </Text>
                               {isOwn && (
@@ -482,7 +502,7 @@ export default function ServiceDetailScreen() {
                               )}
                             </View>
                           </View>
-                          <Text className="font-light text-sm text-[#555] leading-5">
+                          <Text className="font-instrumentSans text-sm leading-5" style={{ color: '#5A574F' }}>
                             {comment.content}
                           </Text>
                         </View>
@@ -495,6 +515,6 @@ export default function ServiceDetailScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   )
 }
