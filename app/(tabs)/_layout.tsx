@@ -66,6 +66,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen name="ratings" options={{ href: null, headerShown: false }} />
+      <Tabs.Screen name="subscription" options={{ href: null, headerShown: false }} />
     </Tabs>
   )
 }

@@ -7,10 +7,13 @@ import type { Profile } from '@/types/database'
 import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import * as ImagePicker from 'expo-image-picker'
-import { router } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { router, useFocusEffect } from 'expo-router'
+import { useCallback, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+type OwnService = { id: string; name: string; is_active: boolean }
+type ClientRequest = { status: 'pending' | 'approved' | 'rejected' }
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth()
@@ -18,21 +21,42 @@ export default function ProfileScreen() {
   const [editName, setEditName] = useState('')
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [clientRequest, setClientRequest] = useState<ClientRequest | null>(null)
+  const [ownService, setOwnService] = useState<OwnService | null>(null)
 
-  useEffect(() => {
+  const loadProfile = useCallback(async () => {
     if (!user) return
-    supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single()
-      .then(({ data }) => {
-        if (data) {
-          setProfile(data)
-          setEditName(data.full_name?.normalize('NFC') ?? '')
-        }
-      })
+    const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+    if (!data) return
+    setProfile(data)
+    setEditName(data.full_name?.normalize('NFC') ?? '')
+
+    const { data: requestData } = await supabase
+      .from('client_requests')
+      .select('status')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    setClientRequest(requestData ?? null)
+
+    if (data.role === 'client') {
+      const { data: serviceData } = await supabase
+        .from('services')
+        .select('id, name, is_active')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+      setOwnService(serviceData ?? null)
+    } else {
+      setOwnService(null)
+    }
   }, [user])
+
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile()
+    }, [loadProfile])
+  )
 
   const handleSave = async () => {
     if (!user) return
@@ -132,6 +156,17 @@ export default function ProfileScreen() {
     ? new Date(profile.created_at).toLocaleDateString('es-AR', { month: 'short', year: 'numeric' })
     : null
 
+  const subscriptionSubtitle = (() => {
+    if (profile?.role === 'admin') return 'Administrador'
+    if (profile?.role === 'client') {
+      if (!ownService) return 'Cliente · Sin servicio publicado'
+      return ownService.is_active ? 'Cliente · Publicado' : 'Cliente · Pendiente de revisión'
+    }
+    if (clientRequest?.status === 'pending') return 'Solicitud pendiente'
+    if (clientRequest?.status === 'rejected') return 'Solicitud rechazada'
+    return 'Sin activar'
+  })()
+
   return (
     <SafeAreaView className="flex-1 bg-cream">
       <View className="px-5 pt-7 pb-2 flex-row items-center gap-3.5">
@@ -185,8 +220,9 @@ export default function ProfileScreen() {
           </AuthButton>
         </View>
 
-        {/* Subscription (decorative placeholder) */}
-        <View
+        {/* Subscription */}
+        <Pressable
+          onPress={() => router.push('/subscription' as any)}
           className="mt-4 rounded-2xl bg-white px-4 py-[14px] flex-row items-center justify-between"
           style={{ borderWidth: 1.5, borderColor: '#ECE6DA' }}
         >
@@ -195,11 +231,11 @@ export default function ProfileScreen() {
               Mi suscripción
             </Text>
             <Text className="font-instrumentSans text-[11.5px] mt-0.5" style={{ color: '#8A8478' }}>
-              Plan emprendedor · Activa
+              {subscriptionSubtitle}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={Brand.dorado} />
-        </View>
+        </Pressable>
 
         {/* Menu items */}
         <View

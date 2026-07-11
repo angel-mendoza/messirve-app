@@ -61,6 +61,7 @@ export type Profile = {
   full_name: string | null
   avatar_url: string | null
   created_at: string
+  role: 'admin' | 'client' | 'user'
 }
 
 export type ClientRequestStatus = 'pending' | 'approved' | 'rejected'
