@@ -1,10 +1,11 @@
-import { StarRating } from '@/components/star-rating'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
+import { getCategoryColor } from '@/lib/category-colors'
 import { supabase } from '@/lib/supabase'
+import type { Category } from '@/types/database'
 import { Ionicons } from '@expo/vector-icons'
 import { router, useFocusEffect } from 'expo-router'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -13,42 +14,60 @@ type RatedService = {
   name: string
   city: string | null
   stars: number
+  updatedAt: string
+  comment: string | null
   categories: { name: string; emoji: string | null; slug: string } | null
-}
-
-const STAR_LABELS: Record<number, string> = {
-  1: 'Malo',
-  2: 'Regular',
-  3: 'Bueno',
-  4: 'Muy bueno',
-  5: 'Excelente',
 }
 
 export default function RatingsScreen() {
   const { user } = useAuth()
   const [items, setItems] = useState<RatedService[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
     if (!user) return
     setLoading(true)
+
+    const { data: categoriesData } = await supabase.from('categories').select('*').order('order')
+    if (categoriesData) setCategories(categoriesData)
+
     const { data } = await supabase
       .from('service_ratings')
-      .select('stars, services(id, name, city, categories(name, emoji, slug))')
+      .select('stars, updated_at, services(id, name, city, categories(name, emoji, slug))')
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false })
 
-    if (data) {
-      setItems(
-        data.map((r: any) => ({
-          id: r.services.id,
-          name: r.services.name,
-          city: r.services.city,
-          stars: r.stars,
-          categories: r.services.categories,
-        }))
-      )
+    if (!data || data.length === 0) {
+      setItems([])
+      setLoading(false)
+      return
     }
+
+    const serviceIds = data.map((r: any) => r.services.id)
+    const { data: commentsData } = await supabase
+      .from('service_comments')
+      .select('service_id, content, created_at')
+      .eq('user_id', user.id)
+      .in('service_id', serviceIds)
+      .order('created_at', { ascending: false })
+
+    const commentByService = new Map<string, string>()
+    commentsData?.forEach((c) => {
+      if (!commentByService.has(c.service_id)) commentByService.set(c.service_id, c.content)
+    })
+
+    setItems(
+      data.map((r: any) => ({
+        id: r.services.id,
+        name: r.services.name,
+        city: r.services.city,
+        stars: r.stars,
+        updatedAt: r.updated_at,
+        comment: commentByService.get(r.services.id) ?? null,
+        categories: r.services.categories
+      }))
+    )
     setLoading(false)
   }, [user])
 
@@ -58,25 +77,22 @@ export default function RatingsScreen() {
     }, [load])
   )
 
-  const avgRating = useMemo(() => {
-    if (items.length === 0) return 0
-    return items.reduce((sum, i) => sum + i.stars, 0) / items.length
-  }, [items])
-
   return (
-    <SafeAreaView className="flex-1 bg-[#E8EDF3]">
-      {/* Header */}
-      <View
-        className="flex-row items-center px-5 pt-4 pb-4 bg-white border-b"
-        style={{ borderBottomColor: '#EBEBEB' }}
-      >
-        <Pressable onPress={() => router.back()} hitSlop={10} className="mr-3">
-          <Ionicons name="arrow-back" size={24} color={Brand.celeste} />
+    <SafeAreaView className="flex-1 bg-cream" edges={['top']}>
+      <View className="px-4 pt-2 pb-4">
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+          hitSlop={8}
+          className="mb-2 self-start"
+        >
+          <Ionicons name="chevron-back" size={22} color="#8A8478" />
         </Pressable>
-        <View className="flex-1">
-          <Text className="font-bold text-[22px] text-[#1a1a1a]">Mis calificaciones</Text>
-          <Text className="font-light text-[13px] text-[#888]">Servicios que calificaste</Text>
-        </View>
+        <Text className="font-anton text-[24px] uppercase" style={{ color: '#2C4A73' }}>
+          Mis reseñas
+        </Text>
+        <Text className="font-instrumentSans text-[13px] mt-2" style={{ color: '#8A8478' }}>
+          Lo que dejaste sobre los servicios que probaste.
+        </Text>
       </View>
 
       {loading ? (
@@ -89,127 +105,73 @@ export default function RatingsScreen() {
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={<SummaryBar total={items.length} avg={avgRating} />}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 32, display: 'flex', flexDirection: 'column', gap: 10 }}
+          contentContainerStyle={{
+            paddingHorizontal: 20,
+            paddingBottom: 32,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12
+          }}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <RatingCard item={item} />}
+          renderItem={({ item, index }) => {
+            const color = getCategoryColor(
+              item.categories?.slug ?? '',
+              categories.findIndex((c) => c.slug === item.categories?.slug) >= 0
+                ? categories.findIndex((c) => c.slug === item.categories?.slug)
+                : index
+            )
+            return <RatingCard item={item} color={color.hex} />
+          }}
         />
       )}
     </SafeAreaView>
   )
 }
 
-function SummaryBar({ total, avg }: { total: number; avg: number }) {
-  return (
-    <View
-      className="flex-row bg-white rounded-2xl mt-5 mb-4 py-[18px] px-6 border"
-      style={{
-        borderColor: '#D8DEE8',
-        boxShadow: '0 4px 12px rgba(26, 41, 64, 0.13)'
-      }}
-    >
-      <StatItem value={total.toString()} label="Calificados" />
-      <View className="w-px bg-[#EBEBEB] mx-5" />
-      <StatItem value={avg.toFixed(1)} label="Promedio" icon="star" />
-    </View>
-  )
-}
+function RatingCard({ item, color }: { item: RatedService; color: string }) {
+  const initial = item.name.trim().charAt(0).toUpperCase()
+  const date = new Date(item.updatedAt).toLocaleDateString('es-AR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  })
 
-function StatItem({ value, label, icon }: { value: string; label: string; icon?: string }) {
-  return (
-    <View className="flex-1 items-center">
-      <View className="flex-row items-center gap-1">
-        {icon && <Ionicons name="star" size={14} color={Brand.dorado} />}
-        <Text className="font-bold text-[22px] text-[#1a1a1a]">{value}</Text>
-      </View>
-      <Text className="font-light text-xs text-[#888] mt-[1px]">{label}</Text>
-    </View>
-  )
-}
-
-function RatingCard({ item }: { item: RatedService }) {
   return (
     <Pressable
       onPress={() => router.push(`/services/${item.id}` as any)}
-      className="rounded-[18px] mb-[14px] overflow-hidden border"
-      style={({ pressed }) => ({
-        backgroundColor: pressed ? '#F4F7FA' : '#fff',
-        borderColor: '#D8DEE8',
-        boxShadow: '0 4px 12px rgba(26, 41, 64, 0.13)'
-      })}
+      className="rounded-2xl bg-white p-4"
+      style={{ borderWidth: 1.5, borderColor: '#ECE6DA' }}
     >
-      {/* Top section */}
-      <View className="flex-row items-center p-4 pb-[14px] bg-[#FAFAFA]">
-        {/* Emoji avatar */}
+      <View className="flex-row items-center gap-3">
         <View
-          className="rounded-full items-center justify-center shrink-0 mr-[14px] w-[58px] h-[58px] border-2"
-          style={{
-            backgroundColor: Brand.celeste + '20',
-            borderColor: Brand.celeste + '30'
-          }}
+          className="items-center justify-center rounded-full bg-white"
+          style={{ width: 38, height: 38, borderWidth: 1.5, borderColor: color }}
         >
-          <Text className="text-[26px]">{item.categories?.emoji ?? '🏷️'}</Text>
+          <Text className="font-anton text-[14px]" style={{ color }}>
+            {initial}
+          </Text>
         </View>
-
-        {/* Name + chips */}
-        <View className="flex-1 gap-1.5">
-          <Text className="font-bold text-base text-[#1a1a1a]" numberOfLines={1}>
+        <View className="flex-1">
+          <Text className="font-instrumentSansSemibold text-[14.5px]" style={{ color: '#1B2A3D' }}>
             {item.name}
           </Text>
-          <Text>aqui</Text>
-
-          {/* Category + city chips */}
-          <View className="flex-row flex-wrap gap-1.5">
-            {item.categories?.name ? (
-              <View
-                className="rounded-[20px] px-2 py-[3px] border"
-                style={{
-                  backgroundColor: Brand.celeste + '18',
-                  borderColor: Brand.celeste + '30'
-                }}
-              >
-                <Text className="font-sans text-[11px] text-celeste">{item.categories.name}</Text>
-              </View>
-            ) : null}
-            {item.city ? (
-              <View
-                className="flex-row items-center rounded-[20px] px-2 py-[3px] gap-[3px] bg-[#F4F4F4] border"
-                style={{ borderColor: '#E8E8E8' }}
-              >
-                <Ionicons name="location-outline" size={11} color="#999" />
-                <Text className="font-sans text-[11px] text-[#777]">{item.city}</Text>
-              </View>
-            ) : null}
-          </View>
+          <Text className="font-instrumentSans text-[11.5px]" style={{ color: '#A9A297' }}>
+            {date}
+          </Text>
         </View>
-
-        {/* Score badge */}
-        <View
-          className="rounded-[14px] px-3 py-2 ml-3 items-center shrink-0 border"
-          style={{
-            backgroundColor: Brand.dorado + '1A',
-            borderColor: Brand.dorado + '30'
-          }}
-        >
-          <Text className="font-bold text-xl text-dorado leading-[22px]">{item.stars}</Text>
-          <Text className="font-light text-[9px] text-dorado">/ 5</Text>
-        </View>
+        <Text style={{ color: Brand.dorado, fontSize: 15, letterSpacing: 1.5 }}>
+          {'★'.repeat(item.stars) + '☆'.repeat(5 - item.stars)}
+        </Text>
       </View>
 
-      {/* Divider */}
-      <View className="h-px bg-[#F0F0F0]" />
-
-      {/* Bottom section: stars + label + chevron */}
-      <View className="flex-row items-center px-4 py-[11px] gap-2 bg-[#FAFAFA]">
-        <StarRating value={item.stars} size={17} readonly />
-        <View
-          className="flex-1 rounded-[20px] px-[10px] py-[3px] self-center"
-          style={{ backgroundColor: Brand.dorado + '14' }}
+      {item.comment && (
+        <Text
+          className="font-instrumentSans text-[13.5px] mt-3 leading-[19px]"
+          style={{ color: '#43413B', fontStyle: 'italic' }}
         >
-          <Text className="font-sans text-xs text-dorado">{STAR_LABELS[item.stars] ?? ''}</Text>
-        </View>
-        <Ionicons name="chevron-forward" size={16} color={Brand.gris} />
-      </View>
+          {`"${item.comment}"`}
+        </Text>
+      )}
     </Pressable>
   )
 }
@@ -223,18 +185,20 @@ function EmptyState() {
       >
         <Text className="text-[40px]">⭐</Text>
       </View>
-      <Text className="font-bold text-lg text-[#333] text-center mb-2">
+      <Text className="font-instrumentSansSemibold text-lg text-center mb-2" style={{ color: '#2C4A73' }}>
         Aún no calificaste ningún servicio
       </Text>
-      <Text className="font-light text-sm text-[#888] text-center leading-5">
+      <Text className="font-instrumentSans text-sm text-center leading-5" style={{ color: '#8A8478' }}>
         Explorá los servicios disponibles y dejá tu opinión
       </Text>
       <Pressable
         onPress={() => router.push('/' as any)}
-        className="mt-7 rounded-xl px-7 py-3"
+        className="mt-7 rounded-full px-7 py-3"
         style={({ pressed }) => ({ backgroundColor: pressed ? Brand.celeste + 'CC' : Brand.celeste })}
       >
-        <Text className="font-bold text-body text-white">Explorar servicios</Text>
+        <Text className="font-anton text-[14px] uppercase text-white" style={{ letterSpacing: 0.5 }}>
+          Explorar servicios
+        </Text>
       </Pressable>
     </View>
   )
