@@ -1,17 +1,24 @@
-import { ServiceCard } from '@/components/service-card'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
+import { getCategoryColor } from '@/lib/category-colors'
 import { supabase } from '@/lib/supabase'
-import type { ServiceWithStats } from '@/types/database'
+import type { Category, ServiceWithStats } from '@/types/database'
+import { Ionicons } from '@expo/vector-icons'
 import { router, useFocusEffect } from 'expo-router'
 import { useCallback, useState } from 'react'
-import { ActivityIndicator, FlatList, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function FavoritesScreen() {
   const { user } = useAuth()
   const [services, setServices] = useState<ServiceWithStats[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
+
+  const loadCategories = useCallback(async () => {
+    const { data } = await supabase.from('categories').select('*').order('order')
+    if (data) setCategories(data)
+  }, [])
 
   const loadFavorites = useCallback(async () => {
     if (!user) return
@@ -76,7 +83,8 @@ export default function FavoritesScreen() {
   useFocusEffect(
     useCallback(() => {
       loadFavorites()
-    }, [loadFavorites])
+      loadCategories()
+    }, [loadFavorites, loadCategories])
   )
 
   const handleUnlike = async (serviceId: string) => {
@@ -87,26 +95,30 @@ export default function FavoritesScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-white">
+      <SafeAreaView className="flex-1 items-center justify-center bg-cream">
         <ActivityIndicator size="large" color={Brand.celeste} />
       </SafeAreaView>
     )
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-cream">
       <View className="px-5 pt-6 pb-4">
-        <Text className="text-[26px] text-[#1a1a1a]">Mis favoritos</Text>
-        <Text className="font-light text-sm text-[#888] mt-0.5">Servicios que te gustaron</Text>
+        <Text className="font-anton text-[24px] uppercase" style={{ color: '#2C4A73' }}>
+          Favoritos
+        </Text>
+        <Text className="font-instrumentSans text-[13px] mt-2" style={{ color: '#8A8478' }}>
+          {`${services.length} ${services.length === 1 ? 'servicio guardado' : 'servicios guardados'} por vos.`}
+        </Text>
       </View>
 
       {services.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="font-bold text-5xl mb-4">💛</Text>
-          <Text  className="text-lg text-[#333] text-center">
+          <Text className="text-5xl mb-4">💛</Text>
+          <Text className="font-instrumentSansSemibold text-lg text-center" style={{ color: '#2C4A73' }}>
             Aún no tenés favoritos
           </Text>
-          <Text className="font-bold text-sm text-[#888] text-center mt-2">
+          <Text className="font-instrumentSans text-sm text-center mt-2" style={{ color: '#8A8478' }}>
             Explorá los servicios y agregá los que más te gusten
           </Text>
         </View>
@@ -114,14 +126,46 @@ export default function FavoritesScreen() {
         <FlatList
           data={services}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ServiceCard
-              service={item}
-              onPress={() => router.push(`/services/${item.id}` as any)}
-              onLike={() => handleUnlike(item.id)}
-            />
-          )}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+          renderItem={({ item, index }) => {
+            const categorySlug = (item as any).categories?.slug ?? ''
+            const categoryIndex = categories.findIndex((c) => c.slug === categorySlug)
+            const color = getCategoryColor(categorySlug, categoryIndex >= 0 ? categoryIndex : index)
+            const initial = item.name.trim().charAt(0).toUpperCase()
+            return (
+              <Pressable
+                onPress={() => router.push(`/services/${item.id}` as any)}
+                className="flex-row items-center bg-white px-4 py-[14px]"
+                style={{ borderRadius: 18, borderWidth: 1.5, borderColor: '#ECE6DA', gap: 12 }}
+              >
+                <View
+                  className="items-center justify-center rounded-full bg-white"
+                  style={{ width: 40, height: 40, borderWidth: 1.5, borderColor: color.hex }}
+                >
+                  <Text className="font-anton text-[15px]" style={{ color: color.hex }}>
+                    {initial}
+                  </Text>
+                </View>
+                <View className="flex-1">
+                  <Text className="font-instrumentSansSemibold text-[14.5px]" style={{ color: '#1B2A3D' }}>
+                    {item.name}
+                  </Text>
+                  <Text className="font-instrumentSans text-[12px] mt-0.5" style={{ color: '#8A8478' }}>
+                    {(item as any).categories?.name ?? ''} · {item.city}
+                  </Text>
+                </View>
+                <Pressable onPress={() => handleUnlike(item.id)} hitSlop={8}>
+                  <Ionicons name="heart" size={18} color={Brand.dorado} />
+                </Pressable>
+              </Pressable>
+            )
+          }}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10
+          }}
           showsVerticalScrollIndicator={false}
         />
       )}
