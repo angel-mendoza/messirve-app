@@ -1,3 +1,5 @@
+import { AuthButton } from '@/components/auth-button'
+import { AuthInput } from '@/components/auth-input'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
 import { supabase } from '@/lib/supabase'
@@ -7,14 +9,13 @@ import { Image } from 'expo-image'
 import * as ImagePicker from 'expo-image-picker'
 import { router } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { ActivityIndicator, Alert, Pressable, Text, TextInput, View } from 'react-native'
+import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [editName, setEditName] = useState('')
-  const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
 
@@ -44,7 +45,6 @@ export default function ProfileScreen() {
       Alert.alert('Error', 'No se pudo guardar el nombre')
     } else {
       setProfile((prev) => (prev ? { ...prev, full_name: editName.trim() } : prev))
-      setEditing(false)
     }
   }
 
@@ -128,95 +128,121 @@ export default function ProfileScreen() {
         .toUpperCase()
     : user?.email?.[0].toUpperCase() ?? '?'
 
-  return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="font-bold px-5 pt-6 pb-4">
-        <Text className="text-[26px] text-[#1a1a1a]">Mi perfil</Text>
-      </View>
+  const memberSince = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString('es-AR', { month: 'short', year: 'numeric' })
+    : null
 
-      {/* Avatar */}
-      <View className="items-center py-8">
-        <Pressable onPress={handleAvatarChange} disabled={uploading} className="mb-3">
-          <View className="rounded-full w-[88px] h-[88px] items-center justify-center overflow-hidden bg-celeste">
+  return (
+    <SafeAreaView className="flex-1 bg-cream">
+      <View className="px-5 pt-7 pb-2 flex-row items-center gap-3.5">
+        <Pressable onPress={handleAvatarChange} disabled={uploading}>
+          <View
+            className="rounded-full w-[58px] h-[58px] items-center justify-center overflow-hidden bg-white"
+            style={{ borderWidth: 2, borderColor: Brand.celeste }}
+          >
             {profile?.avatar_url ? (
               <Image
                 source={{ uri: profile.avatar_url }}
-                style={{ width: 88, height: 88 }}
+                style={{ width: 58, height: 58 }}
                 contentFit="cover"
               />
             ) : (
-              <Text className="font-bold text-[32px] text-white">{initials}</Text>
+              <Text className="font-anton text-[22px]" style={{ color: Brand.celeste }}>
+                {initials}
+              </Text>
             )}
           </View>
-          <View className="absolute bottom-0 right-0 bg-white rounded-full p-1 border border-gray-100" style={{ shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }}>
+          <View
+            className="absolute bottom-0 right-0 bg-white rounded-full p-1 border border-gray-100"
+            style={{ shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 }}
+          >
             {uploading ? (
-              <ActivityIndicator size={14} color={Brand.celeste} />
+              <ActivityIndicator size={11} color={Brand.celeste} />
             ) : (
-              <Ionicons name="camera" size={14} color={Brand.celeste} />
+              <Ionicons name="camera" size={11} color={Brand.celeste} />
             )}
           </View>
         </Pressable>
 
-        {editing ? (
-          <View className="flex-row items-center gap-2 px-8">
-            <TextInput
-              value={editName}
-              onChangeText={setEditName}
-              className="flex-1 font-sans text-base text-[#1a1a1a] border-b-2 border-b-celeste pb-1 text-center"
-              autoFocus
-            />
-            <Pressable onPress={handleSave} disabled={saving}>
-              <Ionicons name="checkmark-circle" size={28} color={Brand.celeste} />
-            </Pressable>
-            <Pressable onPress={() => setEditing(false)}>
-              <Ionicons name="close-circle" size={28} color={Brand.gris} />
-            </Pressable>
-          </View>
-        ) : (
-          <View className="flex-row items-center gap-2">
-            <Text className="font-bold text-xl text-[#1a1a1a]">{displayName ?? 'Sin nombre'}</Text>
-            <Pressable onPress={() => setEditing(true)} hitSlop={8}>
-              <Ionicons name="pencil" size={16} color={Brand.gris} />
-            </Pressable>
-          </View>
-        )}
-
-        <Text className="font-light text-sm text-[#888] mt-1">{user?.email}</Text>
+        <View>
+          <Text className="font-anton text-[19px] uppercase" style={{ color: '#2C4A73' }}>
+            {displayName ?? 'Sin nombre'}
+          </Text>
+          <Text className="font-instrumentSans text-[12.5px] mt-0.5" style={{ color: '#8A8478' }}>
+            {memberSince ? `Miembro desde ${memberSince} · Barcelona` : 'Barcelona'}
+          </Text>
+        </View>
       </View>
 
-      {/* Menu items */}
-      <View className="px-5 gap-2">
-        <View className="rounded-2xl overflow-hidden bg-[#F8F9FA]">
+      {/* Form */}
+      <View className="px-5 pt-5">
+        <AuthInput label="Nombre completo" value={editName} onChangeText={setEditName} />
+        <AuthInput label="Email" value={user?.email ?? ''} editable={false} />
+
+        <View className="mt-1">
+          <AuthButton onPress={handleSave} disabled={saving}>
+            {saving ? 'GUARDANDO...' : 'GUARDAR CAMBIOS'}
+          </AuthButton>
+        </View>
+
+        {/* Subscription (decorative placeholder) */}
+        <View
+          className="mt-4 rounded-2xl bg-white px-4 py-[14px] flex-row items-center justify-between"
+          style={{ borderWidth: 1.5, borderColor: '#ECE6DA' }}
+        >
+          <View>
+            <Text className="font-instrumentSansSemibold text-[13.5px]" style={{ color: '#1B2A3D' }}>
+              Mi suscripción
+            </Text>
+            <Text className="font-instrumentSans text-[11.5px] mt-0.5" style={{ color: '#8A8478' }}>
+              Plan emprendedor · Activa
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={Brand.dorado} />
+        </View>
+
+        {/* Menu items */}
+        <View
+          className="mt-4 rounded-2xl overflow-hidden bg-white"
+          style={{ borderWidth: 1.5, borderColor: '#ECE6DA' }}
+        >
           <Pressable
             onPress={() => router.push('/favorites' as any)}
             className="flex-row items-center px-4 py-4"
             style={({ pressed }) => ({
               borderBottomWidth: 1,
-              borderBottomColor: '#EFEFEF',
-              backgroundColor: pressed ? '#F5F5F5' : 'transparent'
+              borderBottomColor: '#ECE6DA',
+              backgroundColor: pressed ? '#FAF7F0' : 'transparent'
             })}
           >
-            <Ionicons name="heart-outline" size={22} color={Brand.celeste} style={{ marginRight: 14 }} />
-            <Text className="font-sans text-base text-[#333] flex-1">Mis favoritos</Text>
-            <Ionicons name="chevron-forward" size={18} color={Brand.gris} />
+            <Ionicons name="heart-outline" size={20} color={Brand.celeste} style={{ marginRight: 14 }} />
+            <Text className="font-instrumentSans text-[14.5px] flex-1" style={{ color: '#1B2A3D' }}>
+              Mis favoritos
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color="#8A8478" />
           </Pressable>
           <Pressable
             onPress={() => router.push('/ratings' as any)}
             className="flex-row items-center px-4 py-4"
-            style={({ pressed }) => ({ backgroundColor: pressed ? '#F5F5F5' : 'transparent' })}
+            style={({ pressed }) => ({ backgroundColor: pressed ? '#FAF7F0' : 'transparent' })}
           >
-            <Ionicons name="star-outline" size={22} color={Brand.celeste} style={{ marginRight: 14 }} />
-            <Text className="font-sans text-base text-[#333] flex-1">Mis calificaciones</Text>
-            <Ionicons name="chevron-forward" size={18} color={Brand.gris} />
+            <Ionicons name="star-outline" size={20} color={Brand.celeste} style={{ marginRight: 14 }} />
+            <Text className="font-instrumentSans text-[14.5px] flex-1" style={{ color: '#1B2A3D' }}>
+              Mis calificaciones
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color="#8A8478" />
           </Pressable>
         </View>
 
         <Pressable
           onPress={handleSignOut}
-          className="flex-row items-center px-4 py-4 rounded-2xl mt-4 bg-[#FFF0F0]"
+          className="flex-row items-center justify-center px-4 py-4 rounded-2xl mt-4 bg-white"
+          style={{ borderWidth: 1.5, borderColor: '#F5C6C6' }}
         >
-          <Ionicons name="log-out-outline" size={22} color="#e53e3e" style={{ marginRight: 14 }} />
-          <Text className="font-bold text-base text-[#e53e3e]">Cerrar sesión</Text>
+          <Ionicons name="log-out-outline" size={20} color="#e53e3e" style={{ marginRight: 10 }} />
+          <Text className="font-instrumentSansSemibold text-[14.5px]" style={{ color: '#e53e3e' }}>
+            Cerrar sesión
+          </Text>
         </Pressable>
       </View>
     </SafeAreaView>
