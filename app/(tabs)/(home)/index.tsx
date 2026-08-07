@@ -3,8 +3,8 @@ import { getCategoryColor, getCategoryIconSource } from '@/lib/category-colors'
 import { supabase } from '@/lib/supabase'
 import type { Category } from '@/types/database'
 import { Ionicons } from '@expo/vector-icons'
-import { router } from 'expo-router'
 import { Image } from 'expo-image'
+import { router } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -81,9 +81,9 @@ export default function HomeScreen() {
         }
         ListFooterComponent={
           <View className="mt-6 mb-2 flex-row items-center justify-center gap-2">
-            <Text className="font-anton text-[16px] italic text-celeste">Messirve</Text>
+            <Text className="font-anton text-[16px] italic text-celeste uppercase">Messirve</Text>
             <Ionicons name="star" size={14} color={Brand.dorado} />
-            <Text className="font-anton text-[16px] italic text-dorado">Te sirve</Text>
+            <Text className="font-anton text-[16px] italic text-dorado uppercase">Te sirve</Text>
           </View>
         }
         renderItem={({ item, index }) => {
