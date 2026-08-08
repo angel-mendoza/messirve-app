@@ -6,8 +6,8 @@ import { supabase } from '@/lib/supabase'
 import type { Category, Profile, Service, ServiceComment } from '@/types/database'
 import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
-import { router, useLocalSearchParams } from 'expo-router'
-import { useEffect, useRef, useState } from 'react'
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import { useCallback, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -47,12 +47,7 @@ export default function ServiceDetailScreen() {
   const [imageContainerWidth, setImageContainerWidth] = useState(width)
   const scrollViewRef = useRef<ScrollView>(null)
 
-  useEffect(() => {
-    if (!id || !user) return
-    loadAll()
-  }, [id, user])
-
-  const loadAll = async () => {
+  const loadAll = useCallback(async () => {
     if (!id || !user) return
     setLoading(true)
 
@@ -101,7 +96,13 @@ export default function ServiceDetailScreen() {
     }
 
     setLoading(false)
-  }
+  }, [id, user])
+
+  useFocusEffect(
+    useCallback(() => {
+      loadAll()
+    }, [loadAll])
+  )
 
   const handleLike = async () => {
     if (!user || !id) return
@@ -109,10 +110,14 @@ export default function ServiceDetailScreen() {
     setUserLiked(!wasLiked)
     setTotalLikes((prev) => (wasLiked ? prev - 1 : prev + 1))
 
-    if (wasLiked) {
-      await supabase.from('service_likes').delete().eq('user_id', user.id).eq('service_id', id)
-    } else {
-      await supabase.from('service_likes').insert({ user_id: user.id, service_id: id })
+    const { error } = wasLiked
+      ? await supabase.from('service_likes').delete().eq('user_id', user.id).eq('service_id', id)
+      : await supabase.from('service_likes').insert({ user_id: user.id, service_id: id })
+
+    if (error) {
+      setUserLiked(wasLiked)
+      setTotalLikes((prev) => (wasLiked ? prev + 1 : prev - 1))
+      Alert.alert('Error', 'No se pudo guardar tu me gusta')
     }
   }
 

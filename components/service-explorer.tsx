@@ -114,19 +114,20 @@ export function ServiceExplorer({ mode, greetingName, initialQuery = '', initial
     const service = services.find((s) => s.id === serviceId)
     if (!service) return
 
-    const update = (prev: ServiceWithStats[]) =>
+    const toggle = (prev: ServiceWithStats[]) =>
       prev.map((s) =>
         s.id === serviceId
           ? { ...s, user_liked: !s.user_liked, total_likes: s.user_liked ? s.total_likes - 1 : s.total_likes + 1 }
           : s
       )
-    setServices(update)
+    setServices(toggle)
 
-    if (service.user_liked) {
-      await supabase.from('service_likes').delete().eq('user_id', user.id).eq('service_id', serviceId)
-    } else {
-      await supabase.from('service_likes').insert({ user_id: user.id, service_id: serviceId })
-    }
+    const { error } = service.user_liked
+      ? await supabase.from('service_likes').delete().eq('user_id', user.id).eq('service_id', serviceId)
+      : await supabase.from('service_likes').insert({ user_id: user.id, service_id: serviceId })
+
+    // Toggle back on failure — applying the same flip twice returns to the original state
+    if (error) setServices(toggle)
   }
 
   const title =

@@ -89,8 +89,13 @@ export default function FavoritesScreen() {
 
   const handleUnlike = async (serviceId: string) => {
     if (!user) return
-    await supabase.from('service_likes').delete().eq('user_id', user.id).eq('service_id', serviceId)
+    const removed = services.find((s) => s.id === serviceId)
     setServices((prev) => prev.filter((s) => s.id !== serviceId))
+
+    const { error } = await supabase.from('service_likes').delete().eq('user_id', user.id).eq('service_id', serviceId)
+    if (error && removed) {
+      setServices((prev) => [...prev, removed])
+    }
   }
 
   if (loading) {
