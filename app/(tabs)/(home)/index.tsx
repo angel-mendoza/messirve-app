@@ -48,9 +48,9 @@ export default function HomeScreen() {
         ListHeaderComponent={
           <View className="mb-4">
             <Image
-              source={require('@/assets/images/mobile-hero.png')}
+              source={require('@/assets/images/header.png')}
               className="w-full"
-              style={{ height: undefined, aspectRatio: 1.4 }}
+              style={{ height: undefined, aspectRatio: 1.5 }}
               contentFit="cover"
             />
             <View
@@ -81,9 +81,11 @@ export default function HomeScreen() {
         }
         ListFooterComponent={
           <View className="mt-6 mb-2 flex-row items-center justify-center gap-2">
-            <Text className="font-anton text-[16px] italic text-celeste uppercase">Messirve</Text>
-            <Ionicons name="star" size={14} color={Brand.dorado} />
-            <Text className="font-anton text-[16px] italic text-dorado uppercase">Te sirve</Text>
+            <Image
+              source={require('@/assets/images/footer.png')}
+              style={{ height: 40, aspectRatio: 203 / 40 }}
+              contentFit="contain"
+            />
           </View>
         }
         renderItem={({ item, index }) => {
