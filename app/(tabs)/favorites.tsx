@@ -119,7 +119,7 @@ export default function FavoritesScreen() {
 
       {services.length === 0 ? (
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-5xl mb-4">💛</Text>
+          <Ionicons name="heart" size={56} color={Brand.dorado} style={{ marginBottom: 16 }} />
           <Text className="font-instrumentSansSemibold text-lg text-center" style={{ color: '#2C4A73' }}>
             Aún no tenés favoritos
           </Text>
