@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "messirve-app",
+    "name": "Messirve",
     "slug": "messirve",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,8 +18,10 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.RECORD_AUDIO"],
-      "package": "com.anonymous.messirveapp"
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "eu.messirve"
     },
     "web": {
       "output": "static",
@@ -55,9 +57,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "f6e10b25-02c1-4ae2-a4b3-8baf18e6b916"
+        "projectId": "e43078ff-5dde-426b-b89f-a79f7e12ec2f"
       }
     },
-    "owner": "crissdevs-organization"
+    "owner": "luis.onlife.dev"
   }
 }
