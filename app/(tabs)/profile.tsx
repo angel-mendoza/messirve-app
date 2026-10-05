@@ -61,9 +61,7 @@ export default function ProfileScreen() {
   const handleSave = async () => {
     if (!user) return
     setSaving(true)
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({ id: user.id, full_name: editName.trim() })
+    const { error } = await supabase.from('profiles').upsert({ id: user.id, full_name: editName.trim() })
     setSaving(false)
     if (error) {
       Alert.alert('Error', 'No se pudo guardar el nombre')
@@ -84,7 +82,7 @@ export default function ProfileScreen() {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
-      base64: true,
+      base64: true
     })
 
     if (result.canceled || !result.assets[0]) return
@@ -118,11 +116,11 @@ export default function ProfileScreen() {
         return
       }
 
-      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+      const {
+        data: { publicUrl }
+      } = supabase.storage.from('avatars').getPublicUrl(path)
 
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({ id: user!.id, avatar_url: publicUrl })
+      const { error: profileError } = await supabase.from('profiles').upsert({ id: user!.id, avatar_url: publicUrl })
 
       if (profileError) {
         Alert.alert('Error', 'No se pudo actualizar el perfil')
@@ -150,7 +148,7 @@ export default function ProfileScreen() {
         .map((n) => n[0])
         .join('')
         .toUpperCase()
-    : user?.email?.[0].toUpperCase() ?? '?'
+    : (user?.email?.[0].toUpperCase() ?? '?')
 
   const memberSince = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString('es-AR', { month: 'short', year: 'numeric' })
@@ -176,11 +174,7 @@ export default function ProfileScreen() {
             style={{ borderWidth: 2, borderColor: Brand.celeste }}
           >
             {profile?.avatar_url ? (
-              <Image
-                source={{ uri: profile.avatar_url }}
-                style={{ width: 58, height: 58 }}
-                contentFit="cover"
-              />
+              <Image source={{ uri: profile.avatar_url }} style={{ width: 58, height: 58 }} contentFit="cover" />
             ) : (
               <Text className="font-anton text-[22px]" style={{ color: Brand.celeste }}>
                 {initials}
@@ -272,11 +266,10 @@ export default function ProfileScreen() {
 
         <Pressable
           onPress={handleSignOut}
-          className="flex-row items-center justify-center px-4 py-4 rounded-2xl mt-4 bg-white"
-          style={{ borderWidth: 1.5, borderColor: '#F5C6C6' }}
+          className="items-center justify-center rounded-full bg-white h-14 mt-5"
+          style={{ borderWidth: 1.5, borderColor: Brand.celesteDeep, opacity: 1 }}
         >
-          <Ionicons name="log-out-outline" size={20} color="#e53e3e" style={{ marginRight: 10 }} />
-          <Text className="font-instrumentSansSemibold text-[14.5px]" style={{ color: '#e53e3e' }}>
+          <Text className="font-anton text-[15px] uppercase" style={{ color: Brand.celesteDeep, letterSpacing: 0.5 }}>
             Cerrar sesión
           </Text>
         </Pressable>
