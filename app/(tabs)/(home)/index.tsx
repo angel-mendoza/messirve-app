@@ -43,7 +43,7 @@ export default function HomeScreen() {
       <FlatList
         data={categories}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ gap: 5, paddingBottom: 32 }}
+        contentContainerStyle={{ gap: 5 }}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View className="mb-4">
@@ -80,13 +80,12 @@ export default function HomeScreen() {
           </View>
         }
         ListFooterComponent={
-          <View className="mt-6 mb-2 flex-row items-center justify-center gap-2">
-            <Image
-              source={require('@/assets/images/footer.png')}
-              style={{ height: 40, aspectRatio: 203 / 40 }}
-              contentFit="contain"
-            />
-          </View>
+          <Image
+            source={require('@/assets/home_footer.png')}
+            className="mt-4 w-full"
+            style={{ height: undefined, aspectRatio: 491 / 89 }}
+            contentFit="cover"
+          />
         }
         renderItem={({ item, index }) => {
           const color = getCategoryColor(item.slug, index)
