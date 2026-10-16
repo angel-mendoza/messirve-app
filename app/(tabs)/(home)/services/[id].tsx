@@ -216,7 +216,8 @@ export default function ServiceDetailScreen() {
   }
 
   const photos = service.photos ?? []
-  const imageHeight = Math.min(imageContainerWidth * 0.75, 250)
+  // 4:3 sin tope de alto: las fotos se suben recortadas a 1200×900 desde la web.
+  const imageHeight = imageContainerWidth * 0.75
   const categoryIndex = categories.findIndex((c) => c.slug === (service.categories as any)?.slug)
   const categoryColor = getCategoryColor((service.categories as any)?.slug ?? '', categoryIndex >= 0 ? categoryIndex : 0)
 
