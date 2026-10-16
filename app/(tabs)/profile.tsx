@@ -1,4 +1,5 @@
-import { AuthButton } from '@/components/auth-button'
+// FULL_NAME_DISABLED: solo lo usaba el botón de guardar nombre
+// import { AuthButton } from '@/components/auth-button'
 import { AuthInput } from '@/components/auth-input'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
@@ -18,8 +19,9 @@ type ClientRequest = { status: 'pending' | 'approved' | 'rejected' }
 export default function ProfileScreen() {
   const { user, signOut } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [editName, setEditName] = useState('')
-  const [saving, setSaving] = useState(false)
+  // FULL_NAME_DISABLED: el cliente pidió quitar el nombre (2026-10-16)
+  // const [editName, setEditName] = useState('')
+  // const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [clientRequest, setClientRequest] = useState<ClientRequest | null>(null)
   const [ownService, setOwnService] = useState<OwnService | null>(null)
@@ -29,7 +31,7 @@ export default function ProfileScreen() {
     const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
     if (!data) return
     setProfile(data)
-    setEditName(data.full_name?.normalize('NFC') ?? '')
+    // FULL_NAME_DISABLED: setEditName(data.full_name?.normalize('NFC') ?? '')
 
     const { data: requestData } = await supabase
       .from('client_requests')
@@ -58,17 +60,18 @@ export default function ProfileScreen() {
     }, [loadProfile])
   )
 
-  const handleSave = async () => {
-    if (!user) return
-    setSaving(true)
-    const { error } = await supabase.from('profiles').upsert({ id: user.id, full_name: editName.trim() })
-    setSaving(false)
-    if (error) {
-      Alert.alert('Error', 'No se pudo guardar el nombre')
-    } else {
-      setProfile((prev) => (prev ? { ...prev, full_name: editName.trim() } : prev))
-    }
-  }
+  // FULL_NAME_DISABLED: el perfil solo guardaba el nombre
+  // const handleSave = async () => {
+  //   if (!user) return
+  //   setSaving(true)
+  //   const { error } = await supabase.from('profiles').upsert({ id: user.id, full_name: editName.trim() })
+  //   setSaving(false)
+  //   if (error) {
+  //     Alert.alert('Error', 'No se pudo guardar el nombre')
+  //   } else {
+  //     setProfile((prev) => (prev ? { ...prev, full_name: editName.trim() } : prev))
+  //   }
+  // }
 
   const handleAvatarChange = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -140,15 +143,17 @@ export default function ProfileScreen() {
     ])
   }
 
-  const displayName = profile?.full_name?.normalize('NFC') ?? null
-  const initials = displayName
-    ? displayName
-        .split(' ')
-        .slice(0, 2)
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-    : (user?.email?.[0].toUpperCase() ?? '?')
+  // FULL_NAME_DISABLED: el cliente pidió quitar el nombre (2026-10-16)
+  // const displayName = profile?.full_name?.normalize('NFC') ?? null
+  // const initials = displayName
+  //   ? displayName
+  //       .split(' ')
+  //       .slice(0, 2)
+  //       .map((n) => n[0])
+  //       .join('')
+  //       .toUpperCase()
+  //   : (user?.email?.[0].toUpperCase() ?? '?')
+  const initials = user?.email?.[0].toUpperCase() ?? '?'
 
   const memberSince = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString('es-AR', { month: 'short', year: 'numeric' })
@@ -194,8 +199,13 @@ export default function ProfileScreen() {
         </Pressable>
 
         <View>
+          {/* FULL_NAME_DISABLED
           <Text className="font-anton text-[19px] uppercase" style={{ color: '#2C4A73' }}>
             {displayName ?? 'Sin nombre'}
+          </Text>
+          */}
+          <Text className="font-anton text-[19px]" style={{ color: '#2C4A73' }}>
+            {user?.email ?? ''}
           </Text>
           <Text className="font-instrumentSans text-[12.5px] mt-0.5" style={{ color: '#8A8478' }}>
             {memberSince ? `Miembro desde ${memberSince} · Barcelona` : 'Barcelona'}
@@ -205,14 +215,16 @@ export default function ProfileScreen() {
 
       {/* Form */}
       <View className="px-5 pt-5">
-        <AuthInput label="Nombre completo" value={editName} onChangeText={setEditName} />
+        {/* FULL_NAME_DISABLED: <AuthInput label="Nombre completo" value={editName} onChangeText={setEditName} /> */}
         <AuthInput label="Email" value={user?.email ?? ''} editable={false} />
 
+        {/* FULL_NAME_DISABLED: el botón solo guardaba el nombre
         <View className="mt-1">
           <AuthButton onPress={handleSave} disabled={saving}>
             {saving ? 'GUARDANDO...' : 'GUARDAR CAMBIOS'}
           </AuthButton>
         </View>
+        */}
 
         {/* Subscription */}
         <Pressable

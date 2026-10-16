@@ -58,7 +58,8 @@ export type ServiceComment = {
 
 export type Profile = {
   id: string
-  full_name: string | null
+  // FULL_NAME_DISABLED: el cliente pidió quitar el nombre (2026-10-16)
+  // full_name: string | null
   avatar_url: string | null
   created_at: string
   role: 'admin' | 'client' | 'user'

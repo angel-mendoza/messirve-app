@@ -86,7 +86,8 @@ export default function ServiceDetailScreen() {
       const userIds = [...new Set(commentsData.map((c) => c.user_id))]
       const { data: profilesData } = await supabase
         .from('profiles')
-        .select('id, full_name, avatar_url')
+        // FULL_NAME_DISABLED: .select('id, full_name, avatar_url')
+        .select('id, avatar_url')
         .in('id', userIds)
 
       const profileMap = new Map(profilesData?.map((p) => [p.id, p]) ?? [])
@@ -164,7 +165,8 @@ export default function ServiceDetailScreen() {
 
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('id, full_name, avatar_url')
+      // FULL_NAME_DISABLED: .select('id, full_name, avatar_url')
+      .select('id, avatar_url')
       .eq('id', user.id)
       .single()
 
@@ -466,7 +468,8 @@ export default function ServiceDetailScreen() {
               ) : (
                 <View className="gap-3">
                   {comments.map((comment) => {
-                    const name = (comment.profile?.full_name ?? 'Usuario').normalize('NFC')
+                    // FULL_NAME_DISABLED: const name = (comment.profile?.full_name ?? 'Usuario').normalize('NFC')
+                    const name = 'Usuario'
                     const initial = name[0].toUpperCase()
                     const isOwn = comment.user_id === user?.id
                     const avatarUrl = comment.profile?.avatar_url
