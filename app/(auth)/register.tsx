@@ -11,14 +11,16 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function RegisterScreen() {
   const { signUp } = useAuth()
-  const [fullName, setFullName] = useState('')
+  // FULL_NAME_DISABLED: el cliente pidió quitar el nombre (2026-10-16)
+  // const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleRegister = async () => {
-    if (!fullName.trim() || !email.trim() || !password.trim()) {
+    // FULL_NAME_DISABLED: if (!fullName.trim() || !email.trim() || !password.trim()) {
+    if (!email.trim() || !password.trim()) {
       Alert.alert('Error', 'Por favor completá todos los campos')
       return
     }
@@ -31,7 +33,8 @@ export default function RegisterScreen() {
       return
     }
     setLoading(true)
-    const { error } = await signUp(email.trim(), password, fullName.trim())
+    // FULL_NAME_DISABLED: const { error } = await signUp(email.trim(), password, fullName.trim())
+    const { error } = await signUp(email.trim(), password)
     setLoading(false)
     if (error) {
       Alert.alert('Error al registrarse', error)
@@ -62,6 +65,7 @@ export default function RegisterScreen() {
             Sumate a la comunidad. Lleva un minuto.
           </Text>
 
+          {/* FULL_NAME_DISABLED: el cliente pidió quitar el nombre (2026-10-16)
           <AuthInput
             label="Nombre completo"
             value={fullName}
@@ -69,6 +73,7 @@ export default function RegisterScreen() {
             placeholder="Valentina Gómez"
             autoCapitalize="words"
           />
+          */}
 
           <AuthInput
             label="Email"

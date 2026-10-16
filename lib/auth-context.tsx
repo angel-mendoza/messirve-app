@@ -7,7 +7,8 @@ type AuthContextType = {
   user: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>
+  // FULL_NAME_DISABLED: signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>
+  signUp: (email: string, password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
 }
 
@@ -40,14 +41,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUp = async (
     email: string,
-    password: string,
-    fullName: string
+    password: string
+    // FULL_NAME_DISABLED: fullName: string
   ): Promise<{ error: string | null }> => {
     const frontendUrl = process.env.EXPO_PUBLIC_FRONTEND_URL!
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName }, emailRedirectTo: `${frontendUrl}/auth/confirm`  }
+      // FULL_NAME_DISABLED: options: { data: { full_name: fullName }, emailRedirectTo: `${frontendUrl}/auth/confirm`  }
+      options: { emailRedirectTo: `${frontendUrl}/auth/confirm` }
     })
     if (error) {
       console.log('[signUp error]', JSON.stringify(error, null, 2))
