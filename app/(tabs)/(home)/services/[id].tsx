@@ -1,5 +1,6 @@
 import { StarRating } from '@/components/star-rating'
 import { ServiceAddressLink } from '@/components/service-address-link'
+import { ServicePhoneLink } from '@/components/service-phone-link'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
 import { getCategoryColor } from '@/lib/category-colors'
@@ -351,17 +352,7 @@ export default function ServiceDetailScreen() {
                   </Text>
                 </View>
               )}
-              {service.phone && (
-                <Pressable
-                  className="flex-row items-center gap-3"
-                  onPress={() => Linking.openURL(`tel:${service.phone}`)}
-                >
-                  <Ionicons name="logo-whatsapp" size={18} color={Brand.celeste} />
-                  <Text className="font-instrumentSans text-sm" style={{ color: '#4E7FBF' }}>
-                    {service.phone}
-                  </Text>
-                </Pressable>
-              )}
+              {service.phone && <ServicePhoneLink phone={service.phone} />}
               {service.instagram && (
                 <Pressable
                   className="flex-row items-center gap-3"
