@@ -13,6 +13,8 @@ export type Service = {
   description: string | null
   address: string | null
   city: string
+  latitude: number | null
+  longitude: number | null
   price_info: string | null
   phone: string | null
   website: string | null

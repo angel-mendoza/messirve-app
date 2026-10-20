@@ -1,4 +1,5 @@
 import { StarRating } from '@/components/star-rating'
+import { ServiceAddressLink } from '@/components/service-address-link'
 import { Brand } from '@/constants/theme'
 import { useAuth } from '@/lib/auth-context'
 import { getCategoryColor } from '@/lib/category-colors'
@@ -341,14 +342,7 @@ export default function ServiceDetailScreen() {
               className="rounded-2xl p-4 mb-5 gap-3 bg-white"
               style={{ borderWidth: 1.5, borderColor: '#ECE6DA', borderCurve: 'continuous' }}
             >
-              {service.address && (
-                <View className="flex-row items-start gap-3">
-                  <Ionicons name="location" size={18} color={Brand.celeste} style={{ marginTop: 1 }} />
-                  <Text className="font-instrumentSans text-sm flex-1" style={{ color: '#5A574F' }}>
-                    {service.address}, {service.city}
-                  </Text>
-                </View>
-              )}
+              <ServiceAddressLink service={service} />
               {service.price_info && (
                 <View className="flex-row items-center gap-3">
                   <Ionicons name="pricetag" size={18} color={Brand.celeste} />
